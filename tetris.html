@@ -46,7 +46,7 @@
 <script>
 
 let Cell = {
-	Wall : 1,
+  Wall : 1,
 };
 // カウンタ
 var cnt = 0;
@@ -105,24 +105,24 @@ var field = [
 
 // ブロックのでーた 
 function Block(x, y, type) {
-	this.x = x;
-	this.y = y;
-	this.type = type;
+  this.x = x;
+  this.y = y;
+  this.type = type;
 }
 
 // 各ブロックを格納する
 let blocks = [
   [
     [0,0,0,0],
-	[0,1,1,0],
-	[0,1,1,0],
+    [0,1,1,0],
+    [0,1,1,0],
     [0,0,0,0]
   ],
   [
-	[0,1,0,0],
-	[0,1,1,0],
-	[0,0,1,0],
-	[0,0,0,0]
+    [0,1,0,0],
+    [0,1,1,0],
+    [0,0,1,0],
+    [0,0,0,0]
   ]
 ];
 var block = new Block(4, 0, 1);
@@ -136,13 +136,13 @@ let disp = function() {
   for(var i = 0; i < 22; i++) {
     for(var j = 0; j < 12; j++) {
       switch(vram[i][j]) {
-	  case Cell.Wall:
+   case Cell.Wall:
         s += "<div class='cell wall'></div>";
-		break;
-	  default: // それ以外
+    break;
+    default: // それ以外
         s += "<div class='cell'></div>";
         break;
-	  }
+    }
     }
   }
 
@@ -165,7 +165,7 @@ let copy = function(sa, da, sx, sy, dx, dy, width, height, ignore) {
     for(var j = 0; j < width; j++) {
       if(sa[sy + i][sx + j] == ignore) continue;
       da[dy + i][dx + j] = sa[sy + i][sx + j];
-	}
+  }
   }
 };
 
@@ -174,9 +174,9 @@ let checkOkeru = function(btype, x, y) {
   var b = blocks[btype];
   for(var i = y; i < y + 4; i++) {
     for(var j = x; j < x + 4; j++) {
-	  if(b[i-y][j-x] == 0) continue;
+    if(b[i-y][j-x] == 0) continue;
       if(field[i][j] != 0) return false;
-	}
+  }
   }
   return true;
 };
@@ -196,8 +196,8 @@ let process = function() {
 let delline = function(y) {
   for(var i = y; i > 0; i--) {
     for(var j = 1; j < 11; j++) {
-	  field[i][j] = field[i-1][j];
-	}
+    field[i][j] = field[i-1][j];
+  }
   }
 };
 
@@ -210,11 +210,11 @@ let next = function() {
   
   for(var i = 0; i < 21; i++){
     var cnt = 0;
-	for(var j = 1; j < 11; j++){
-	  cnt++;
-	  if(field[i][j] == 0) break;
-	}
-	if(cnt == 10) delline(i);
+  for(var j = 1; j < 11; j++){
+    cnt++;
+    if(field[i][j] == 0) break;
+  }
+  if(cnt == 10) delline(i);
   }
   // 次のブロックを登録
   block.type = Math.floor(Math.random() * (2));
@@ -236,16 +236,16 @@ document.addEventListener("keydown", function(e) {
   switch(e.keyCode) {
   case 65: // 'a'
   case 37: // ←
-	if(checkOkeru(block.type, block.x - 1, block.y)) block.x--;
-	break;
+  if(checkOkeru(block.type, block.x - 1, block.y)) block.x--;
+  break;
   case 68: // 'd'
   case 39: // →
-	if(checkOkeru(block.type, block.x + 1, block.y)) block.x++;
-	break;
+  if(checkOkeru(block.type, block.x + 1, block.y)) block.x++;
+  break;
   case 83: // 's'
   case 40: // ↓
-	process();
-	break;
+  process();
+  break;
   }
   
   graph();
