@@ -37,6 +37,33 @@
   border-bottom: 1px solid rgb(64, 64, 64);
 }
 
+.I {
+  background-color: #00bfff;
+}
+
+.T {
+  background-color: #dda0dd;
+}
+
+.O {
+  background-color: #ffd700;
+}
+
+.Z {
+  background-color: #800;
+}
+
+.S {
+  background-color: #00ff00;
+}
+
+.L {
+  background-color: #ff7f50;
+}
+
+.J {
+  background-color: #008;
+}
 </style>
 <body> 
 
@@ -46,7 +73,15 @@
 <script>
 
 let Cell = {
+  None : 0,
   Wall : 1,
+  I : 2,
+  O : 3,
+  S : 4,
+  Z : 5,
+  J : 6,
+  L : 7,
+  T : 8,
 };
 // カウンタ
 var cnt = 0;
@@ -112,41 +147,108 @@ function Block(x, y, type) {
 }
 
 // 各ブロックを格納する
-let block_status = [0, 1, 1, 3, 3, 3, 1];
+//let block_status = [1, 2, 2, 4, 4, 4, 2]
+let block_status = [0, 1, 1, 3, 3, 3, 1]
 let blocks = [
-  [
-    [1,1],
-    [1,1]
+  [ // I
+    [
+      [Cell.I,Cell.I,Cell.I,Cell.I]
+    ],
+    [
+      [Cell.I],
+      [Cell.I],
+      [Cell.I],
+      [Cell.I]
+    ]
   ],
-  [
-    [1,0],
-    [1,1],
-    [0,1]
+  [ // O
+    [
+      [Cell.O,Cell.O],
+      [Cell.O,Cell.O]
+    ]
   ],
-  [
-    [0,1],
-    [1,1],
-    [1,0]
+  [ // S
+    [
+      [Cell.S,Cell.None],
+      [Cell.S,Cell.S],
+      [Cell.None,Cell.S]
+    ],
+    [
+      [Cell.None,Cell.S,Cell.S],
+      [Cell.S,Cell.S,Cell.None]
+    ]
   ],
-  [
-    [1,0],
-    [1,0],
-    [1,1]
+  [ // Z
+    [
+      [Cell.None,Cell.Z],
+      [Cell.Z,Cell.Z],
+      [Cell.Z,Cell.None]
+    ],
+    [
+      [Cell.Z,Cell.Z,Cell.None],
+      [Cell.None,Cell.Z,Cell.Z]
+    ]
   ],
-  [
-    [0,1],
-    [0,1],
-    [1,1]
+  [ // J
+    [
+      [Cell.None,Cell.J],
+      [Cell.None,Cell.J],
+      [Cell.J,Cell.J]
+    ],
+    [
+      [Cell.J,Cell.None,Cell.None],
+      [Cell.J,Cell.J,Cell.J]
+    ],
+    [
+      [Cell.J,Cell.J],
+      [Cell.J,Cell.None],
+      [Cell.J,Cell.None]
+    ],
+    [
+      [Cell.J,Cell.J,Cell.J],
+      [Cell.None,Cell.None,Cell.J]
+    ]
   ],
-  [
-    [1,0],
-    [1,1],
-    [1,0]
+  [ // L
+    [
+      [Cell.L,Cell.None],
+      [Cell.L,Cell.None],
+      [Cell.L,Cell.L]
+    ],
+    [
+      [Cell.L,Cell.L,Cell.L],
+      [Cell.L,Cell.None,Cell.None]
+    ],
+    [
+      [Cell.L,Cell.L],
+      [Cell.None,Cell.L],
+      [Cell.None,Cell.L]
+    ],
+    [
+      [Cell.None,Cell.None,Cell.L],
+      [Cell.L,Cell.L,Cell.L]
+    ]
   ],
-  [
-    [1,1,1,1]
+  [ // T
+    [
+      [Cell.T,Cell.None],
+      [Cell.T,Cell.T],
+      [Cell.T,Cell.None]
+    ],
+    [
+      [Cell.T,Cell.T,Cell.T],
+      [Cell.None,Cell.T,Cell.None]
+    ],
+    [
+      [Cell.None,Cell.T],
+      [Cell.T,Cell.T],
+      [Cell.None,Cell.T]
+    ],
+    [
+      [Cell.None,Cell.T,Cell.None],
+      [Cell.T,Cell.T,Cell.T]
+    ]
   ]
-
 ];
 var block = new Block(4, 0, 1);
 
@@ -158,25 +260,25 @@ let disp = function() {
 
   for(var i = 0; i < 22; i++) {
     for(var j = 0; j < 12; j++) {
+      s += "<div class='cell ";
       switch(vram[i][j]) {
-      case Cell.Wall:
-        s += "<div class='cell wall'></div>";
-        break;
-      default: // それ以外
-        s += "<div class='cell'></div>";
-        break;
+      case Cell.Wall: s += "wall"; break;
+      case Cell.I: s += "I"; break;
+      case Cell.O: s += "O"; break;
+      case Cell.S: s += "S"; break;
+      case Cell.Z: s += "Z"; break;
+      case Cell.J: s += "J"; break;
+      case Cell.L: s += "L"; break;
+      case Cell.T: s += "T"; break;
+      case Cell.None: break;
       }
+      s += "'></div>";
     }
   }
 
   d.innerHTML = s; // 要素に書き込み
 };
 
-let rotate1 = function(arr) {
-  let width = arr[0].length;
-  let height = arr.length;
-
-}
 // 配列コピー
 // sa : コピー元配列
 // da : コピー先配列
@@ -187,40 +289,46 @@ let rotate1 = function(arr) {
 // width : コピーする幅
 // height : コピーする高さ
 // ignore : コピーしない値
-let copy = function(sa, da, sx, sy, dx, dy, ignore, isRotate) {
+let copy = function(sa, da, sx, sy, dx, dy, ignore) {
   let width = sa[0].length;
   let height = sa.length;
   for(var i = 0; i < height; i++) {
     for(var j = 0; j < width; j++) {
       if(sa[sy + i][sx + j] == ignore) continue;
       da[dy + i][dx + j] = sa[sy + i][sx + j];
-  }
+    }
   }
 };
 
+var okeruCache = [0,0];
 // btypeなブロックが(x, y)な座標に設置できるか
-let checkOkeru = function(btype, x, y) {
-  var b = blocks[btype];
+let checkOkeru = function(btype, status, x, y) {
+  console.log("status => " + status);
+  var b = blocks[btype][status];
   let w = b[0].length;
   let h = b.length;
+  console.log("okeru " + w + " " + h);
+  if(okeruCache[0] == x && okeruCache[1] == y) return true;
   for(var i = y; i < y + h; i++) {
     for(var j = x; j < x + w; j++) {
-    if(b[i-y][j-x] == 0) continue;
-    if(field[i][j] != 0) return false;
+      if(b[i-y][j-x] == 0) continue;
+      if(field[i][j] != 0) return false;
+    }
   }
-  }
+  okeruCache[0] = x;
+  okeruCache[1] = y;
   return true;
 };
 
 // 描画関係
 let graph = function() {
-  copy(field, vram, 0, 0, 0, 0, -1);
-  copy(blocks[block.type], vram, 0, 0, block.x, block.y, 0);
+  copy(field, vram, 0, 0, 0, 0, -1, 0);
+  copy(blocks[block.type][block.status], vram, 0, 0, block.x, block.y, 0);
   disp();
 };
 
 let process = function() {
-  if(checkOkeru(block.type, block.x, block.y + 1)) block.y++;
+  if(checkOkeru(block.type, block.status, block.x, block.y + 1)) block.y++;
   else next();
 };
 
@@ -234,7 +342,7 @@ let delline = function(y) {
 
 let next = function() {  
   // fieldに固定
-  copy(blocks[block.type], field, 0, 0, block.x, block.y, 0);
+  copy(blocks[block.type][block.status], field, 0, 0, block.x, block.y, 0);
   graph();
   
   for(var i = 0; i < 21; i++){
@@ -249,6 +357,8 @@ let next = function() {
   block.type = Math.floor(Math.random() * (7));
   block.x = 4;
   block.y = 0;
+  block.status = 0;
+  okeruCache = [-1, -1];
 };
 
 // main loop
@@ -264,10 +374,10 @@ document.addEventListener("keydown", function(e) {
   console.log("keycode = " + e.keyCode);
   switch(e.keyCode) {
   case 37: // ←
-    if(checkOkeru(block.type, block.x - 1, block.y)) block.x--;
+    if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--;
     break;
   case 39: // →
-    if(checkOkeru(block.type, block.x + 1, block.y)) block.x++;
+    if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++;
     break;
   case 40: // ↓
     process();
@@ -275,13 +385,21 @@ document.addEventListener("keydown", function(e) {
   case 65: // 'a'
     block.status--;
     if(block.status < 0) block.status = block_status[block.type];
+    if(!checkOkeru(block.type, block.status, block.x, block.y)) {
+      block.status++;
+      if(block.status > block_status[block.type]) block.status = 0;
+    }
     break;
   case 83: // 's'
     block.status++;
     if(block.status > block_status[block.type]) block.status = 0;
+    if(!checkOkeru(block.type, block.status, block.x, block.y)){
+      block.status--;
+      if(block.status < 0) block.status = block_status[block.type];
+    }
     break;
   }
-  
+  console.log("block_status => " + block.status);
   graph();
 });
 loop();
