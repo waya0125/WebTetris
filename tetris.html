@@ -73,6 +73,8 @@
 
 <script>
 
+let field_width = 12;
+let field_height = 22;
 let Cell = {
   None : 0,
   Wall : 1,
@@ -300,23 +302,18 @@ let copy = function(sa, da, sx, sy, dx, dy, ignore) {
   }
 };
 
-var okeruCache = [0,0];
 // btypeなブロックが(x, y)な座標に設置できるか
 let checkOkeru = function(btype, status, x, y) {
   console.log("status => " + status);
   var b = blocks[btype][status];
   let w = b[0].length;
   let h = b.length;
-  console.log("okeru " + w + " " + h);
-  if(okeruCache[0] == x && okeruCache[1] == y) return true;
   for(var i = y; i < y + h; i++) {
     for(var j = x; j < x + w; j++) {
-      if(b[i-y][j-x] == 0) continue;
-      if(field[i][j] != 0) return false;
+      if(b[i-y][j-x] == Cell.None) continue;
+      if(field[i][j] != Cell.None) return false;
     }
   }
-  okeruCache[0] = x;
-  okeruCache[1] = y;
   return true;
 };
 
@@ -334,7 +331,7 @@ let process = function() {
 
 let delline = function(y) {
   for(var i = y; i > 0; i--) {
-    for(var j = 1; j < 11; j++) {
+    for(var j = 1; j < field_width - 1; j++) {
       field[i][j] = field[i-1][j];
     }
   }
@@ -345,20 +342,19 @@ let next = function() {
   copy(blocks[block.type][block.status], field, 0, 0, block.x, block.y, 0);
   graph();
   
-  for(var i = 0; i < 21; i++){
+  for(var i = 0; i < field_height - 1; i++){
     var cnt = 0;
-    for(var j = 1; j < 11; j++){
+    for(var j = 0; j < field_width; j++){
       cnt++;
-      if(field[i][j] == 0) break;
+      if(field[i][j] == Cell.None) break;
     }
-    if(cnt == 10) delline(i);
+    if(cnt == field_width) delline(i);
   }
   // 次のブロックを登録
   block.type = Math.floor(Math.random() * (7));
   block.x = 4;
   block.y = 0;
   block.status = 0;
-  okeruCache = [-1, -1];
 };
 
 // main loop
