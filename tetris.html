@@ -100,6 +100,16 @@
 
 <script>
 
+
+// ブロックのでーた 
+function Block(x, y, type) {
+  this.x = x;
+  this.y = y;
+  this.type = type;
+  this.status = 0;
+}
+var block = new Block(4, 0, Math.floor(Math.random() * (7)));
+
 let field_width = 12;
 let field_height = 22;
 let Cell = {
@@ -167,14 +177,6 @@ var field = [
     [1,0,0,0,0,0,0,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1],
   ];
-
-// ブロックのでーた 
-function Block(x, y, type) {
-  this.x = x;
-  this.y = y;
-  this.type = type;
-  this.status = 0;
-}
 
 // 各ブロックを格納する
 let block_status = [1, 0, 1, 1, 3, 3, 3]
@@ -279,34 +281,6 @@ let blocks = [
     ]
   ]
 ];
-var block = new Block(4, 0, Math.floor(Math.random() * (7)));
-
-// vramをdisplayへ出力(vram to html)
-let disp = function() {
-  let d = document.getElementById("display"); // 出力場所の要素を取得
-
-  var s = ""; // displayへ書き込むhtmlを格納する変数
-
-  for(var i = 0; i < 22; i++) {
-    for(var j = 0; j < 12; j++) {
-      s += "<div class='cell ";
-      switch(vram[i][j]) {
-      case Cell.Wall: s += "wall"; break;
-      case Cell.I: s += "I"; break;
-      case Cell.O: s += "O"; break;
-      case Cell.S: s += "S"; break;
-      case Cell.Z: s += "Z"; break;
-      case Cell.J: s += "J"; break;
-      case Cell.L: s += "L"; break;
-      case Cell.T: s += "T"; break;
-      case Cell.None: break;
-      }
-      s += "'></div>";
-    }
-  }
-
-  d.innerHTML = s; // 要素に書き込み
-};
 
 // 配列コピー
 // sa : コピー元配列
@@ -343,6 +317,33 @@ let checkOkeru = function(btype, status, x, y) {
   }
   return true;
 };
+
+// vramをdisplayへ出力(vram to html)
+let disp = function() {
+  let d = document.getElementById("display"); // 出力場所の要素を取得
+
+  var s = ""; // displayへ書き込むhtmlを格納する変数
+
+  for(var i = 0; i < 22; i++) {
+    for(var j = 0; j < 12; j++) {
+      s += "<div class='cell ";
+      switch(vram[i][j]) {
+      case Cell.Wall: s += "wall"; break;
+      case Cell.I: s += "I"; break;
+      case Cell.O: s += "O"; break;
+      case Cell.S: s += "S"; break;
+      case Cell.Z: s += "Z"; break;
+      case Cell.J: s += "J"; break;
+      case Cell.L: s += "L"; break;
+      case Cell.T: s += "T"; break;
+      case Cell.None: break;
+      }
+      s += "'></div>";
+    }
+  }
+
+  d.innerHTML = s; // 要素に書き込み
+}; 
 
 // 描画関係
 let graph = function() {
