@@ -108,22 +108,45 @@ function Block(x, y, type) {
   this.x = x;
   this.y = y;
   this.type = type;
+  this.status = 0;
 }
 
 // 各ブロックを格納する
+let block_status = [0, 1]
 let blocks = [
   [
-    [0,0,0,0],
-    [0,1,1,0],
-    [0,1,1,0],
-    [0,0,0,0]
+    [1,1],
+    [1,1]
   ],
   [
-    [0,1,0,0],
-    [0,1,1,0],
-    [0,0,1,0],
-    [0,0,0,0]
+    [1,0],
+    [1,1],
+    [0,1]
+  ],
+  [
+    [0,1],
+    [1,1],
+    [1,0]
+  ],
+  [
+    [1,0],
+    [1,0],
+    [1,1]
+  ],
+  [
+    [0,1],
+    [0,1],
+    [1,1]
+  ],
+  [
+    [1,0],
+    [1,1],
+    [1,0]
+  ],
+  [
+    [1,1,1,1]
   ]
+
 ];
 var block = new Block(4, 0, 1);
 
@@ -136,19 +159,24 @@ let disp = function() {
   for(var i = 0; i < 22; i++) {
     for(var j = 0; j < 12; j++) {
       switch(vram[i][j]) {
-   case Cell.Wall:
+      case Cell.Wall:
         s += "<div class='cell wall'></div>";
-    break;
-    default: // それ以外
+        break;
+      default: // それ以外
         s += "<div class='cell'></div>";
         break;
-    }
+      }
     }
   }
 
   d.innerHTML = s; // 要素に書き込み
 };
 
+let rotate1 = function(arr) {
+  let width = arr[0].length;
+  let height = arr.length;
+
+}
 // 配列コピー
 // sa : コピー元配列
 // da : コピー先配列
@@ -159,8 +187,9 @@ let disp = function() {
 // width : コピーする幅
 // height : コピーする高さ
 // ignore : コピーしない値
-let copy = function(sa, da, sx, sy, dx, dy, width, height, ignore) {
-  
+let copy = function(sa, da, sx, sy, dx, dy, ignore, isRotate) {
+  let width = sa[0].length;
+  let height = sa.length;
   for(var i = 0; i < height; i++) {
     for(var j = 0; j < width; j++) {
       if(sa[sy + i][sx + j] == ignore) continue;
@@ -172,10 +201,12 @@ let copy = function(sa, da, sx, sy, dx, dy, width, height, ignore) {
 // btypeなブロックが(x, y)な座標に設置できるか
 let checkOkeru = function(btype, x, y) {
   var b = blocks[btype];
-  for(var i = y; i < y + 4; i++) {
-    for(var j = x; j < x + 4; j++) {
+  let w = b[0].length;
+  let h = b.length;
+  for(var i = y; i < y + h; i++) {
+    for(var j = x; j < x + w; j++) {
     if(b[i-y][j-x] == 0) continue;
-      if(field[i][j] != 0) return false;
+    if(field[i][j] != 0) return false;
   }
   }
   return true;
@@ -183,8 +214,8 @@ let checkOkeru = function(btype, x, y) {
 
 // 描画関係
 let graph = function() {
-  copy(field, vram, 0, 0, 0, 0, 12, 22, -1);
-  copy(blocks[block.type], vram, 0, 0, block.x, block.y, 4, 4, 0);
+  copy(field, vram, 0, 0, 0, 0, -1);
+  copy(blocks[block.type], vram, 0, 0, block.x, block.y, 0);
   disp();
 };
 
@@ -196,28 +227,26 @@ let process = function() {
 let delline = function(y) {
   for(var i = y; i > 0; i--) {
     for(var j = 1; j < 11; j++) {
-    field[i][j] = field[i-1][j];
-  }
+      field[i][j] = field[i-1][j];
+    }
   }
 };
 
 let next = function() {  
   // fieldに固定
-  let bwidth = blocks[block.type][0].length;
-  let bheight = blocks[block.type].length;
-  copy(blocks[block.type], field, 0, 0, block.x, block.y, bwidth, bheight, 0);
+  copy(blocks[block.type], field, 0, 0, block.x, block.y, 0);
   graph();
   
   for(var i = 0; i < 21; i++){
     var cnt = 0;
-  for(var j = 1; j < 11; j++){
-    cnt++;
-    if(field[i][j] == 0) break;
-  }
-  if(cnt == 10) delline(i);
+    for(var j = 1; j < 11; j++){
+      cnt++;
+      if(field[i][j] == 0) break;
+    }
+    if(cnt == 10) delline(i);
   }
   // 次のブロックを登録
-  block.type = Math.floor(Math.random() * (2));
+  block.type = Math.floor(Math.random() * (7));
   block.x = 4;
   block.y = 0;
 };
@@ -236,16 +265,16 @@ document.addEventListener("keydown", function(e) {
   switch(e.keyCode) {
   case 65: // 'a'
   case 37: // ←
-  if(checkOkeru(block.type, block.x - 1, block.y)) block.x--;
-  break;
+    if(checkOkeru(block.type, block.x - 1, block.y)) block.x--;
+    break;
   case 68: // 'd'
   case 39: // →
-  if(checkOkeru(block.type, block.x + 1, block.y)) block.x++;
-  break;
+    if(checkOkeru(block.type, block.x + 1, block.y)) block.x++;
+    break;
   case 83: // 's'
   case 40: // ↓
-  process();
-  break;
+    process();
+    break;
   }
   
   graph();
