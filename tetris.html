@@ -400,6 +400,12 @@ document.addEventListener("keydown", function(e) {
   case 37: // ←
     if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--;
     break;
+  case 38:
+    while(checkOkeru(block.type, block.status, block.x, block.y + 1)){
+      block.y++;
+    }
+    next();
+    break;
   case 39: // →
     if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++;
     break;
