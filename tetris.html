@@ -112,7 +112,7 @@ function Block(x, y, type) {
 }
 
 // 各ブロックを格納する
-let block_status = [0, 1]
+let block_status = [0, 1, 1, 3, 3, 3, 1];
 let blocks = [
   [
     [1,1],
@@ -263,17 +263,22 @@ let loop = function() {
 document.addEventListener("keydown", function(e) {
   console.log("keycode = " + e.keyCode);
   switch(e.keyCode) {
-  case 65: // 'a'
   case 37: // ←
     if(checkOkeru(block.type, block.x - 1, block.y)) block.x--;
     break;
-  case 68: // 'd'
   case 39: // →
     if(checkOkeru(block.type, block.x + 1, block.y)) block.x++;
     break;
-  case 83: // 's'
   case 40: // ↓
     process();
+    break;
+  case 65: // 'a'
+    block.status--;
+    if(block.status < 0) block.status = block_status[block.type];
+    break;
+  case 83: // 's'
+    block.status++;
+    if(block.status > block_status[block.type]) block.status = 0;
     break;
   }
   
