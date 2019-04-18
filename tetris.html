@@ -37,6 +37,7 @@
   border-bottom: 1px solid rgb(64, 64, 64);
 }
 
+/* 水色 */
 .I {
   background-color: #3399ff;
   border-left: 1px solid #99ccff;
@@ -45,6 +46,7 @@
   border-bottom: 1px solid #0066ff;
 }
 
+/* 紫色 */
 .T {
   background-color: #cc33cc;
   border-left: 1px solid #cc66cc;
@@ -53,6 +55,7 @@
   border-bottom: 1px solid #cc00cc;
 }
 
+/* 黄色 */
 .O {
   background-color: #ccff00;
   border-left: 1px solid #ffff00;
@@ -61,6 +64,7 @@
   border-bottom: 1px solid #99cc00;
 }
 
+/* 赤色 */
 .Z {
   background-color: #ff0033;
   border-left: 1px solid #cc3366;
@@ -69,6 +73,7 @@
   border-bottom: 1px solid #cc0033;
 }
 
+/* 黄緑色 */
 .S {
   background-color: #66cc33;
   border-left: 1px solid #99ff66;
@@ -77,6 +82,7 @@
   border-bottom: 1px solid #339900;
 }
 
+/* オレンジ色 */
 .L {
   background-color: #ff6600;
   border-left: 1px solid #ff9966;
@@ -85,6 +91,7 @@
   border-bottom: 1px solid #cc6633;
 }
 
+/* 青色 */
 .J {
   background-color: #0033cc;
   border-left: 1px solid #0066ff;
@@ -93,6 +100,7 @@
   border-bottom: 1px solid #000099;
 }
 
+/* ボタン */
 #rotate, #left, #up, #right, #down {
   width: 48px;
   height: 48px;
@@ -191,8 +199,9 @@ var field = [
     [1,1,1,1,1,1,1,1,1,1,1,1],
   ];
 
-// 各ブロックを格納する
+// 各ブロックの状態の数 - 1
 let block_status = [1, 0, 1, 1, 3, 3, 3]
+// 各ブロックを格納する
 let blocks = [
   [ // I
     [
@@ -316,7 +325,7 @@ let copy = function(sa, da, sx, sy, dx, dy, ignore) {
   }
 };
 
-// btypeなブロックが(x, y)な座標に設置できるか
+// btypeでstatusなブロックが(x, y)な座標に設置できるか
 let checkOkeru = function(btype, status, x, y) {
   console.log("status => " + status);
   var b = blocks[btype][status];
@@ -360,16 +369,18 @@ let disp = function() {
 
 // 描画関係
 let graph = function() {
-  copy(field, vram, 0, 0, 0, 0, -1, 0);
-  copy(blocks[block.type][block.status], vram, 0, 0, block.x, block.y, 0);
+  copy(field, vram, 0, 0, 0, 0, -1, 0); // vramにfieldをコピー
+  copy(blocks[block.type][block.status], vram, 0, 0, block.x, block.y, 0); // vramにブロックをコピー
   disp();
 };
 
+// 処理
 let process = function() {
-  if(checkOkeru(block.type, block.status, block.x, block.y + 1)) block.y++;
-  else next();
+  if(checkOkeru(block.type, block.status, block.x, block.y + 1)) block.y++; // 置ける
+  else next();  // 置けない
 };
 
+// y行目を消して上のブロックを下げる
 let delline = function(y) {
   for(var i = y; i > 0; i--) {
     for(var j = 1; j < field_width - 1; j++) {
@@ -378,11 +389,13 @@ let delline = function(y) {
   }
 };
 
+// 置けなくなったら
 let next = function() {  
   // fieldに固定
   copy(blocks[block.type][block.status], field, 0, 0, block.x, block.y, 0);
   graph();
   
+  // 消せる行があるか調べる
   for(var i = 0; i < field_height - 1; i++){
     var cnt = 0;
     for(var j = 0; j < field_width; j++){
@@ -406,6 +419,7 @@ let loop = function() {
   setTimeout(loop, 1000);
 };
 
+// ボタンクリックイベント
 document.getElementById("left").addEventListener("click", function() {
   if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--;
 });
@@ -432,26 +446,28 @@ document.getElementById("rotate").addEventListener("click", function() {block.st
     if(block.status < 0) block.status = block_status[block.type];
   }
 });
+
 // キーイベント
 document.addEventListener("keydown", function(e) {
   console.log("keycode = " + e.keyCode);
   switch(e.keyCode) {
   case 37: // ←
-    if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--;
+    if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--; // 左に動かせるなら動かす
     break;
-  case 38:
-    while(checkOkeru(block.type, block.status, block.x, block.y + 1)){
+  case 38:  // ↑
+    while(checkOkeru(block.type, block.status, block.x, block.y + 1)){  //  下まで動かす
       block.y++;
     }
     next();
     break;
   case 39: // →
-    if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++;
+    if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++; // 右に動かせるなら動かす
     break;
   case 40: // ↓
-    process();
+    process();  // 下に動かせるなら動かす
     break;
   case 65: // 'a'
+    // 左に回転できるなら回転する
     block.status--;
     if(block.status < 0) block.status = block_status[block.type];
     if(!checkOkeru(block.type, block.status, block.x, block.y)) {
@@ -460,6 +476,7 @@ document.addEventListener("keydown", function(e) {
     }
     break;
   case 83: // 's'
+    // 右に回転できるなら回転する
     block.status++;
     if(block.status > block_status[block.type]) block.status = 0;
     if(!checkOkeru(block.type, block.status, block.x, block.y)){
@@ -471,7 +488,9 @@ document.addEventListener("keydown", function(e) {
   console.log("block_status => " + block.status);
   graph();
 });
-loop();
+
+loop(); // メインループを実行
+
 </script>
 </body>
 </html>
