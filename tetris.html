@@ -97,6 +97,13 @@
 
   <!-- 表示場所 -->
   <div id="display"></div>
+  <div id="buttons">
+    <input type="button" id="rotate" value="🔁">
+    <input type="button" id="left" value="←">
+    <input type="button" id="up" value="↑">
+    <input type="button" id="right" value="→">
+    <input type="button" id="down" value="↓">
+  </div>
 
 <script>
 
@@ -393,6 +400,32 @@ let loop = function() {
   setTimeout(loop, 1000);
 };
 
+document.getElementById("left").addEventListener("click", function() {
+  if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--;
+});
+
+document.getElementById("up").addEventListener("click", function() {
+  while(checkOkeru(block.type, block.status, block.x, block.y + 1)){
+    block.y++;
+  }
+  next();
+});
+
+document.getElementById("down").addEventListener("click", function() {
+  process();
+});
+
+document.getElementById("right").addEventListener("click", function() {
+  if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++;
+});
+
+document.getElementById("rotate").addEventListener("click", function() {block.status++;
+  if(block.status > block_status[block.type]) block.status = 0;
+  if(!checkOkeru(block.type, block.status, block.x, block.y)){
+    block.status--;
+    if(block.status < 0) block.status = block_status[block.type];
+  }
+});
 // キーイベント
 document.addEventListener("keydown", function(e) {
   console.log("keycode = " + e.keyCode);
