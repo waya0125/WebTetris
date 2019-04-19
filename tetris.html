@@ -130,7 +130,7 @@ function Block(x, y, type) {
   this.status = 0;
 }
 var block = new Block(4, 0, Math.floor(Math.random() * (7)));
-
+let fps = 1000 / 60;
 let field_width = 12;
 let field_height = 22;
 let Cell = {
@@ -394,8 +394,7 @@ let delline = function(y) {
 // 置けなくなったら
 let next = function() {  
   // fieldに固定
-  copy(blocks[block.type][block.status], field, 0, 0, block.x, block.y, 0);
-  graph();
+copy(blocks[block.type][block.status], field, 0, 0, block.x, block.y, 0);
   
   // 消せる行があるか調べる
   for(var i = 0; i < field_height - 1; i++){
@@ -417,7 +416,6 @@ let next = function() {
 // main loop
 let loop = function() {
   console.log(cnt++);
-  graph();
   process();
   setTimeout(loop, 1000);
 };
@@ -489,9 +487,9 @@ document.addEventListener("keydown", function(e) {
     break;
   }
   console.log("block_status => " + block.status);
-  graph();
 });
 
+setInterval(graph, fps);
 loop(); // メインループを実行
 
 </script>
