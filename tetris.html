@@ -346,8 +346,8 @@ let disp = function() {
 
   var s = ""; // displayへ書き込むhtmlを格納する変数
 
-  for(var i = 0; i < 22; i++) {
-    for(var j = 0; j < 12; j++) {
+  for(var i = 0; i < field_height; i++) {
+    for(var j = 0; j < field_width; j++) {
       s += "<div class='cell ";
       switch(vram[i][j]) {
       case Cell.Wall: s += "wall"; break;
