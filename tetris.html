@@ -317,6 +317,7 @@ let blocks = [
 let copy = function(sa, da, sx, sy, dx, dy, ignore) {
   let width = sa[0].length;
   let height = sa.length;
+
   for(var i = 0; i < height; i++) {
     for(var j = 0; j < width; j++) {
       if(sa[sy + i][sx + j] == ignore) continue;
@@ -331,6 +332,7 @@ let checkOkeru = function(btype, status, x, y) {
   var b = blocks[btype][status];
   let w = b[0].length;
   let h = b.length;
+
   for(var i = y; i < y + h; i++) {
     for(var j = x; j < x + w; j++) {
       if(b[i-y][j-x] == Cell.None) continue;
@@ -404,6 +406,7 @@ let next = function() {
     }
     if(cnt == field_width) delline(i);
   }
+
   // 次のブロックを登録
   block.type = Math.floor(Math.random() * (7));
   block.x = 4;
