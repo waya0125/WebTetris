@@ -448,9 +448,21 @@ document.getElementById("rotate").addEventListener("click", function() {block.st
   }
 });
 
+var rotateKey = true;
+
+document.addEventListener("keyup", function(e){
+  switch(e.keyCode) {
+	case 65: // 'a'
+  case 83: // 's'
+		rotateKey = true;
+    break;
+ 
+	}
+});
+
 // キーイベント
 document.addEventListener("keydown", function(e) {
-  console.log("keycode = " + e.keyCode);
+	console.log("keycode = " + e.keyCode);
   switch(e.keyCode) {
   case 37: // ←
     if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--; // 左に動かせるなら動かす
@@ -468,6 +480,8 @@ document.addEventListener("keydown", function(e) {
     process();  // 下に動かせるなら動かす
     break;
   case 65: // 'a'
+		if(!rotateKey) break;
+		rotateKey = false;
     // 左に回転できるなら回転する
     block.status--;
     if(block.status < 0) block.status = block_status[block.type];
@@ -478,6 +492,8 @@ document.addEventListener("keydown", function(e) {
     break;
   case 83: // 's'
     // 右に回転できるなら回転する
+		if(!rotateKey) break;
+		rotateKey = false;
     block.status++;
     if(block.status > block_status[block.type]) block.status = 0;
     if(!checkOkeru(block.type, block.status, block.x, block.y)){
