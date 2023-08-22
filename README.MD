@@ -3,6 +3,7 @@
 ## Description
 
 This is a simple Tetris game. It is based on the [Tetris game](https://github.com/ophum/tetris)
+Working project is [here](https://project-wayamoti.github.io/WebTetris/).
 
 ## Installation
 
