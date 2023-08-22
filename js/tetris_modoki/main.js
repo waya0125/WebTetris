@@ -510,6 +510,8 @@ let loop = function() {
  * 自動再生時ブラウザがブロックするため、ボタンを押したときに実行する
  * https://developer.mozilla.org/ja/docs/Web/Media/Autoplay_guide
  *
+ * 開発環境ではなく実環境で用いる場合、"../../~"とすると404エラーが発生するため必要ない。
+ *
  * サウンドを連続再生したときに音が重ならず単独で再生されてしまうので
  * これを回避するため再生前にcurrentTimeを0にする
  * https://blog.myntinc.com/2019/05/javascriptaudioplay.html
@@ -519,39 +521,39 @@ let loop = function() {
  */
 // MainBGM
 let soundBGM = new Audio();
-soundBGM.src = '../../audio/tetris_TypeA.ogg';
+soundBGM.src = 'audio/tetris_TypeA.ogg';
 soundBGM.loop = true;
 soundBGM.volume = 0.1;
 // 回転音
 let soundRotate = new Audio();
-soundRotate.src = '../../audio/tetris_Rotate.ogg';
+soundRotate.src = 'audio/tetris_Rotate.ogg';
 soundRotate.volume = 0.3;
 // ゲームオーバー
 let soundGameOver = new Audio();
-soundGameOver.src = '../../audio/tetris_GameOver.ogg';
+soundGameOver.src = 'audio/tetris_GameOver.ogg';
 soundGameOver.volume = 0.3;
 // 通常削除音
 let soundDelete = new Audio();
-soundDelete.src = '../../audio/tetris_Delete.ogg';
+soundDelete.src = 'audio/tetris_Delete.ogg';
 soundDelete.volume = 0.3;
 // 4本削除音
 let soundDelete4Line = new Audio();
-soundDelete4Line.src = '../../audio/tetris_Delete4Line.ogg';
+soundDelete4Line.src = 'audio/tetris_Delete4Line.ogg';
 soundDelete4Line.volume = 0.3;
 // 設置音
 let soundSet = new Audio();
-soundSet.src = '../../audio/tetris_Set.ogg';
+soundSet.src = 'audio/tetris_Set.ogg';
 soundSet.volume = 0.3;
 // 一時停止音
 let soundPause = new Audio();
-soundPause.src = '../../audio/tetris_Pause.ogg';
+soundPause.src = 'audio/tetris_Pause.ogg';
 soundPause.volume = 0.1;
 // ハイスコア（未実装だけどゲームオーバー後に流しておく）
 let soundHighScoreStart = new Audio();
-soundHighScoreStart.src = '../../audio/tetris_HighScore_Start.ogg';
+soundHighScoreStart.src = 'audio/tetris_HighScore_Start.ogg';
 soundHighScoreStart.volume = 0.3;
 let soundHighScoreLoop = new Audio();
-soundHighScoreLoop.src = '../../audio/tetris_HighScore_Loop.ogg';
+soundHighScoreLoop.src = 'audio/tetris_HighScore_Loop.ogg';
 soundHighScoreLoop.loop = true;
 soundHighScoreLoop.volume = 0.3;
 
