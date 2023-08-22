@@ -8,6 +8,8 @@ Working project is [here](https://github.com/project-wayamoti/WebTetris).
 
 Stable project is [here](https://github.com/waya0125/WebTetris/).
 
+*Waring : Since mobile support is not yet complete, we currently recommend playing only on PC.*
+
 
 ## Installation
 
