@@ -50,6 +50,7 @@ table {
     font-family: 'EarlyGameBoy', system-ui;
     font-size: 23px;
     color: #1f4130;
+    image-rendering: pixelated;
 }
 .scoreTitle {
     padding-top: 13%;
@@ -86,6 +87,7 @@ table {
     left: 50%;
     transform: translate(-50%,0);
     background-color: #8DAD30;
+    image-rendering: pixelated;
 }
 .tetriminoNext {
     border-left-width: 168px;
@@ -131,7 +133,7 @@ table {
 #tetriminoScore {
     width: 168px;  /* 画像の横幅 */
     height: 432px; /* 画像の縦幅 */
-    background-image: url(../img/svg/tetris_Status2.svg);
+    background-image: url(../img/png/tetris_Status.png);
 }
 #tetriminoDraw {
     display: block;          /* ﾃﾄﾘﾐﾉ一個ごとに改行 */
