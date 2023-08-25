@@ -367,9 +367,6 @@ let deleteLine = function(y) {
 
 // 動かせなくなったら次のブロックを登録
 let blockGenerate = function() {
-    // 一時停止中 or GameOverなら動かさない
-    if(playingState || gameOver) return false;
-
     // 現在のブロックを格納する変数
     currentBlock = nextBlock;
 
@@ -463,13 +460,13 @@ let nextBlockViewer = function() {
     }
     s += "' id='nextBlockViewerImg' class='tetriminoNext ";
     switch(nextBlock) {
-        case 0: s += "BoxI"; break;
-        case 1: s += "BoxO"; break;
-        case 2: s += "BoxS"; break;
-        case 3: s += "BoxZ"; break;
-        case 4: s += "BoxJ"; break;
-        case 5: s += "BoxL"; break;
-        case 6: s += "BoxT"; break;
+        case 0: s += "previewI"; break;
+        case 1: s += "previewO"; break;
+        case 2: s += "previewS"; break;
+        case 3: s += "previewZ"; break;
+        case 4: s += "previewJ"; break;
+        case 5: s += "previewL"; break;
+        case 6: s += "previewT"; break;
     }
     s += "'>";
 
@@ -489,15 +486,18 @@ let tick = function() {
  * 1000ms = 1s
  */
 let loop = function() {
-    // ブロックを動かす
-    blockMove();
+    // 一時停止中・開始前・ゲームオーバーなら動かさない
+    if(!playingState || gameOver) {
+        // ブロックを動かす
+        blockMove();
 
-    document.getElementById("score").textContent = score;
-    document.getElementById("level").textContent = level;
-    document.getElementById("lines").textContent = lines;
-    //document.getElementById("combo").textContent = combo;
+        document.getElementById("score").textContent = score;
+        document.getElementById("level").textContent = level;
+        document.getElementById("lines").textContent = lines;
+        //document.getElementById("combo").textContent = combo;
 
-    if(level < 10) if(score / 2000 > level) level++;
+        if(level < 10) if(score / 2000 > level) level++;
+    }
 
     // 1秒経過するごとに実行
     setTimeout(loop, 1000 - ((level - 1) * 30));
@@ -587,12 +587,10 @@ document.getElementById("playing").addEventListener("click", function() {
     // ボタンのテキストを切り替え
     document.getElementById("playingState").textContent = playingState ? "一時停止" : "再生";
 });
-/* 回転ボタン
- * 1回転ごとにstatusを引いていく
- */
+// 右回転ボタン 1回転ごとにstatusを引いていく
 document.getElementById("rotate").addEventListener("click", function() {block.status++;
-    // 一時停止中なら動かさない
-    if(playingState) return false;
+    // 一時停止中・開始前・ゲームオーバーなら動かさない
+    if(playingState) return;
 
     soundRotate.currentTime = 0;
     soundRotate.play().then(r => r).catch(e => e); // エラーを無視
@@ -603,32 +601,36 @@ document.getElementById("rotate").addEventListener("click", function() {block.st
         if(block.status < 0) block.status = blockStatus[block.type];
     }
 });
-/* 左移動ボタン
- * 左に動かせるなら動かす
- */
+// 左移動ボタン 左に動かせるなら動かす
 document.getElementById("left").addEventListener("click", function() {
+    // 一時停止中・開始前・ゲームオーバーなら動かさない
+    if(playingState || gameOver) return;
+
     if(setBlockCheck(block.type, block.status, block.x - 1, block.y)) block.x--;
 });
-/* 上移動ボタン
- * 一気に下に設置
- */
+// 上移動ボタン 一気に下に設置
 document.getElementById("up").addEventListener("click", function() {
+    // 一時停止中・開始前・ゲームオーバーなら動かさない
+    if(playingState || gameOver) return;
+
     while(setBlockCheck(block.type, block.status, block.x, block.y + 1)){
         block.y++;
     }
     blockGenerate();
     score += 5 * level;
 });
-/* 右移動ボタン
- * 右に動かせるなら動かす
- */
+// 右移動ボタン 右に動かせるなら動かす
 document.getElementById("right").addEventListener("click", function() {
+    // 一時停止中・開始前・ゲームオーバーなら動かさない
+    if(playingState || gameOver) return;
+
     if(setBlockCheck(block.type, block.status, block.x + 1, block.y)) block.x++;
 });
-/* 下移動ボタン
- * 下に動かせるなら動かす
- */
+// 下移動ボタン 下に動かせるなら動かす
 document.getElementById("down").addEventListener("click", function() {
+    // 一時停止中・開始前・ゲームオーバーなら動かさない
+    if(playingState || gameOver) return;
+
     blockMove();
 });
 
@@ -647,6 +649,27 @@ window.addEventListener(
 
         // キーに応じて処理を分ける
         switch (event.code) {
+            // 一時停止
+            case "Escape":
+                // ゲームオーバーならリロード
+                if(gameOver) location.reload();
+
+                // 一時停止中・開始前・ゲームオーバーなら動かさない
+                if(!playingState) {
+                    playingState = true;
+                    soundPause.currentTime = 0;
+                    soundPause.play().then(r => r).catch(e => e); // エラーを無視
+                    soundBGM.pause();
+                }
+                else {
+                    playingState = false;
+                    soundBGM.play().then(r => r).catch(e => e); // エラーを無視
+                }
+
+                // ボタンのテキストを切り替え
+                document.getElementById("playingState").textContent = playingState ? "一時停止" : "再生";
+
+                break;
             // ハードドロップ
             case "Space":
             case "KeyW":
@@ -676,8 +699,8 @@ window.addEventListener(
             // 左回転
             case "KeyQ":
             case "KeyZ":
-                // 一時停止中 or GameOverなら動かさない
-                if(playingState || gameOver) return false;
+                // 一時停止中・開始前・ゲームオーバーなら動かさない
+                if(playingState || gameOver) return;
 
                 // 左に回転させる
                 rotateKey = !rotateKey;
@@ -704,8 +727,8 @@ window.addEventListener(
             // 右回転
             case "KeyE":
             case "ArrowUp":
-                // 一時停止中 or GameOverなら動かさない
-                if(playingState || gameOver) return false;
+                // 一時停止中・開始前・ゲームオーバーなら動かさない
+                if(playingState || gameOver) return;
 
                 // 右に回転させる
                 rotateKey = !rotateKey;

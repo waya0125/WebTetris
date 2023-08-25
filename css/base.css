@@ -1,0 +1,102 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+/* ゲーム画面表示場所の大きさとか */
+#display {
+    width: calc(24px * 12);
+    height: calc(24px * 22);
+}
+
+/* 1マスの大きさとか色(デフォルト 黒) */
+.cell {
+    width: 22px;
+    height: 22px;
+    display:block;
+    float: left;
+    background-color: rgb(32, 32, 32);
+    border-left: 1px solid rgb(64, 64, 64);
+    border-top: 1px solid rgb(64, 64, 64);
+    border-right: 1px solid rgb(16, 16, 16);
+    border-bottom: 1px solid rgb(16, 16, 16);
+}
+
+/* 外側の壁用のマスの色(灰色) */
+.wall {
+    background-color: rgb(128, 128, 128);
+    border-left: 1px solid rgb(192, 192, 192);
+    border-top: 1px solid rgb(192, 192, 192);
+    border-right: 1px solid rgb(64, 64, 64);
+    border-bottom: 1px solid rgb(64, 64, 64);
+}
+
+/* 水色 */
+.I {
+    background-color: #3399ff;
+    border-left: 1px solid #99ccff;
+    border-top: 1px solid #99ccff;
+    border-right: 1px solid #0066ff;
+    border-bottom: 1px solid #0066ff;
+}
+
+/* 紫色 */
+.T {
+    background-color: #cc33cc;
+    border-left: 1px solid #cc66cc;
+    border-top: 1px solid #cc66cc;
+    border-right: 1px solid #cc00cc;
+    border-bottom: 1px solid #cc00cc;
+}
+
+/* 黄色 */
+.O {
+    background-color: #ccff00;
+    border-left: 1px solid #ffff00;
+    border-top: 1px solid #ffff00;
+    border-right: 1px solid #99cc00;
+    border-bottom: 1px solid #99cc00;
+}
+
+/* 赤色 */
+.Z {
+    background-color: #ff0033;
+    border-left: 1px solid #cc3366;
+    border-top: 1px solid #cc3366;
+    border-right: 1px solid #cc0033;
+    border-bottom: 1px solid #cc0033;
+}
+
+/* 黄緑色 */
+.S {
+    background-color: #66cc33;
+    border-left: 1px solid #99ff66;
+    border-top: 1px solid #99ff66;
+    border-right: 1px solid #339900;
+    border-bottom: 1px solid #339900;
+}
+
+/* オレンジ色 */
+.L {
+    background-color: #ff6600;
+    border-left: 1px solid #ff9966;
+    border-top: 1px solid #ff9966;
+    border-right: 1px solid #cc6633;
+    border-bottom: 1px solid #cc6633;
+}
+
+/* 青色 */
+.J {
+    background-color: #0033cc;
+    border-left: 1px solid #0066ff;
+    border-top: 1px solid #0066ff;
+    border-right: 1px solid #000099;
+    border-bottom: 1px solid #000099;
+}
+
+/* ボタン */
+#rotate, #left, #up, #right, #down {
+    width: 48px;
+    height: 48px;
+    font-size: 32px;
+}

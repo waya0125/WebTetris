@@ -31,79 +31,89 @@
         <link rel="stylesheet" href="css/tetris_modoki.css">
     </head>
     <body>
-        <h1>README</h1>
-        <p>テトリスのようなゲームです。</p>
-        <p>※ 最初のブロックだけ表示されません ※</p>
+        <h1>テトリスもどき README</h1>
 
-        <h1>操作方法</h1>
+        <h2>操作説明</h2>
         <table>
             <tr>
                 <th>キー</th>
                 <th>操作</th>
+                <th>備考</th>
             </tr>
             <tr>
                 <td>A/←</td>
                 <td class="text-align-left">左移動</td>
+                <td class="text-align-left">1マスずつ左に移動できます</td>
             </tr>
             <tr>
                 <td>D/→</td>
                 <td class="text-align-left">右移動</td>
+                <td class="text-align-left">1マスずつ右に移動できます</td>
             </tr>
             <tr>
                 <td>S/↓</td>
                 <td class="text-align-left">ソフトドロップ</td>
+                <td class="text-align-left">下に1マスずつ移動できます</td>
             </tr>
             <tr>
                 <td>W/Space</td>
                 <td class="text-align-left">ハードドロップ</td>
+                <td class="text-align-left">下に一気に落とせます</td>
             </tr>
             <tr>
                 <td>Q/Z</td>
                 <td class="text-align-left">左回転</td>
+                <td class="text-align-left">左回転に1回転します</td>
             </tr>
             <tr>
                 <td>E/↑</td>
                 <td class="text-align-left">右回転</td>
+                <td class="text-align-left">右回転に1回転します</td>
             </tr>
             <tr>
                 <td>ESC</td>
                 <td class="text-align-left">一時停止</td>
+                <td class="text-align-left">
+                    ゲームを一時停止します<br>
+                    再開するにはもう一度ESCキーを押してください<br>
+                    また、一時停止中は操作できません。
+                </td>
             </tr>
         </table>
-        詳細は <a href="README.html">README</a> を参照
+        <p>Game Overになってしまった場合、一時停止ボタンを押してリスタートするか、手動でReloadしてください</p>
 
         <br>
 
-        <!-- ステータス表示 -->
-        <h2>ゲームの状態</h2>
-        <div id="playingState">停止中</div>
+        <h2>注意点</h2>
+        <p>このゲームはTHE TETRIS COMPANY, LLCからの承諾を得ておりません</p>
+        <p>また、このゲームはテトリスの著作権の侵害を助長するものではありません</p>
 
         <br>
 
-        <!-- テトリミノ表示 -->
-        <div class="tetris">
-            <div id="tetriminoDraw"></div>
-            <div id="tetriminoScore">
-                <div class="scoreTitle gbFont">SCORE</div>
-                <div id="score" class="gbFont">0</div>
-                <div class="levelTitle gbFont">LEVEL</div>
-                <div id="level" class="gbFont">1</div>
-                <div class="linesTitle gbFont">LINES</div>
-                <div id="lines" class="gbFont">0</div>
-                <div id="nextBlockViewer"></div>
-            </div>
-        </div>
+        <h2>著作権について</h2>
+        <p>音声・ゲーム（システムアルゴリズム・設計等を除く）の基礎は<a href="https://tetris.com/terms-of-service">THE TETRIS COMPANY, LLC</a>の著作物です</p>
+        <p>ゲームアルゴリズム・システムUIの基礎設計は<a href="https://github.com/ophum/tetris">ophum</a>氏の作品を用いて作成しています</p>
+        <p>ゲームシステム・システムUIの改良部分・画像テクスチャ作成等は原作を参考にした上で<a href="https://misskey.io/@waya">wayamoti2015@waya0125</a>が作成しています</p>
 
-        <!-- テトリミノ操作ボタン (スマホ用) -->
-        <div id="buttons">
-            <input type="button" class="emojiFont" id="playing" value="⏯">
-            <input type="button" class="emojiFont" id="rotate" value="🔁">
-            <input type="button" class="emojiFont" id="left" value="←">
-            <input type="button" class="emojiFont" id="up" value="↑">
-            <input type="button" class="emojiFont" id="right" value="→">
-            <input type="button" class="emojiFont" id="down" value="↓">
-        </div>
+        <br>
 
-        <script src="js/main.js"></script>
+        <h2>ライセンス</h2>
+        <p>このゲームは<a href="https://raw.githubusercontent.com/project-wayamoti/WebTetris/main/LICENSE">MITライセンス</a>のもとで公開されています</p>
+        <p>コード・音源・画像テクスチャ等を利用する場合には自己責任での利用をお願いします</p>
+
+        <br>
+
+        <h2>ソースコード</h2>
+        <p>このゲームのソースコードは<a href="https://github.com/project-wayamoti/WebTetris/">GitHub</a>で公開されています</p>
+
+        <br>
+
+        <h2>連絡先</h2>
+        <p>このゲームに関する連絡は<a href="https://misskey.io/@waya">misskey.io/@waya</a>までお願いします</p>
+
+        <br>
+
+        <h2>更新履歴</h2>
+        <p><a href="https://github.com/project-wayamoti/WebTetris/">GitHub</a>をご確認ください</p>
     </body>
 </html>
