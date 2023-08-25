@@ -13,6 +13,7 @@
  * javascript側からHTMLを書き換える - https://web-camp.io/magazine/archives/78967
  * CSS Displayに関して              - https://developer.mozilla.org/ja/docs/Web/CSS/display
  * CSS SVGの取り扱い方法            - https://www.freecodecamp.org/japanese/news/use-svg-images-in-css-html/
+ * innerHTMLの取り扱い              - https://developer.mozilla.org/ja/docs/Web/API/Element/innerHTML
  *
  * サイトにないメモ
  * Tetrisの描画をする際、Flexを使ったほうが楽だ！と言われたためこれを実践。
@@ -46,7 +47,7 @@ let rotateKey = true;  // 回転キーの連打防止
 let level = 1;         // レベル
 let score = 0;         // スコア
 let lines = 0;         // 消したライン数
-let combo = 0;         // コンボ数
+let combo = 0;         // コンボ数 (未実装)
 let playingState = true; // 再生を止めるか否か (true: 一時停止, false: 再生)
 let gameOver = false;  // ゲームオーバーか否か
 
@@ -254,7 +255,7 @@ let blocks = [
  * height: コピーする高さ<br>
  * ignore: コピーしない値
  */
-let copy = function(sa, da, sx, sy, dx, dy, ignore) {
+function copy(sa, da, sx, sy, dx, dy, ignore) {
     let width = sa[0].length;
     let height = sa.length;
 
@@ -264,7 +265,7 @@ let copy = function(sa, da, sx, sy, dx, dy, ignore) {
             da[dy + i][dx + j] = sa[sy + i][sx + j];
         }
     }
-};
+}
 
 /** ブロックを設置できるか判定<br>
  * blockType: ブロックの種類<br>
@@ -273,7 +274,7 @@ let copy = function(sa, da, sx, sy, dx, dy, ignore) {
  * y:         ブロックのy座標<br>
  * return:    設置できるかどうか
  */
-let setBlockCheck = function(blockType, status, x, y) {
+function setBlockCheck(blockType, status, x, y) {
     // 一時停止中なら動かさない
     if(playingState) return false;
 
@@ -292,10 +293,10 @@ let setBlockCheck = function(blockType, status, x, y) {
         }
     }
     return true;
-};
+}
 
 // viewRAMを描画 (viewRAM → html)
-let draw = function() {
+function draw() {
     // 出力場所の要素を取得
     let d = document.getElementById("tetriminoDraw");
 
@@ -332,17 +333,17 @@ let draw = function() {
 
     // 要素に書き込み
     d.innerHTML = s;
-};
+}
 
 // フレームの最後 viewRAM に fieldRAM をコピー
-let graph = function() {
+function graph() {
     copy(fieldRAM, viewRAM, 0, 0, 0, 0, -1, 0); // viewRAM に fieldRAM をコピー
     copy(blocks[block.type][block.status], viewRAM, 0, 0, block.x, block.y, 0); // viewRAM にブロックをコピー
     draw();
-};
+}
 
 // 下に動かせるか判定
-let blockMove = function() {
+function blockMove() {
     // 下に動かせるか？ このとき y 座標を +1 して判定
     if(setBlockCheck(block.type, block.status, block.x, block.y + 1)) {
         block.y++; // 動かせるなら動かす
@@ -350,10 +351,10 @@ let blockMove = function() {
     else {
         blockGenerate(); // 動かせないなら次のブロックへ
     }
-};
+}
 
 // 行列が埋まったら埋まった行を消して消えた分ブロックを下げる
-let deleteLine = function(y) {
+function deleteLine(y) {
     // 消す音の再生
     soundDelete.currentTime = 0;
     soundDelete.play().then(r => r).catch(e => e); // エラーを無視
@@ -363,10 +364,10 @@ let deleteLine = function(y) {
             fieldRAM[i][j] = fieldRAM[i-1][j];
         }
     }
-};
+}
 
 // 動かせなくなったら次のブロックを登録
-let blockGenerate = function() {
+function blockGenerate() {
     // 現在のブロックを格納する変数
     currentBlock = nextBlock;
 
@@ -398,35 +399,10 @@ let blockGenerate = function() {
     for(let i = 1; i < fieldWidth - 1; i++) {
         if(fieldRAM[0][i] !== cell.none) {
             // 一度実行したら実行しない
-            if(gameOver) return false;
-
-            // BGMを止める
-            soundGameOver.currentTime = 0;
-            soundBGM.pause();
-
-            // ゲームオーバー音の再生
-            soundGameOver.currentTime = 0;
-            soundGameOver.play().then(r => r).catch(e => e); // エラーを無視
-
-            soundGameOver.addEventListener('ended', (event) => {
-                // ハイスコア音の再生
-                soundHighScoreStart.currentTime = 0;
-                soundHighScoreStart.play().then(r => r).catch(e => e); // エラーを無視
-
-                soundHighScoreStart.addEventListener('ended', (event) => {
-                    // ハイスコアループ音の再生
-                    soundHighScoreLoop.currentTime = 0;
-                    soundHighScoreLoop.play().then(r => r).catch(e => e); // エラーを無視
-                });
-            });
-
-            // ゲームオーバー
-            gameOver = true;
-            playingState = true;
+            if(gameOver) return;
 
             // ゲームオーバー画面を表示
-            document.getElementById("playingState").textContent = "ゲームオーバー";
-            alert("ゲームオーバー\nスコア: " + score + "\nレベル: " + level + "\nライン: " + lines);
+            gameOverViewer();
         }
     }
 
@@ -438,9 +414,9 @@ let blockGenerate = function() {
 
     // 次のブロックを表示
     nextBlockViewer();
-};
+}
 
-let nextBlockViewer = function() {
+function nextBlockViewer() {
     // 出力場所の要素を取得
     let d = document.getElementById("nextBlockViewer");
 
@@ -474,7 +450,7 @@ let nextBlockViewer = function() {
     d.innerHTML = s;
 }
 
-let tick = function() {
+function tick() {
     let base = 1000;
     if(level === 1) return base;
     base -= level * 30;
@@ -485,23 +461,89 @@ let tick = function() {
  * 1秒経過するごとに実行
  * 1000ms = 1s
  */
-let loop = function() {
+function loop() {
     // 一時停止中・開始前・ゲームオーバーなら動かさない
-    if(!playingState || gameOver) {
+    if(gameOver) return;
+    if(!playingState) {
         // ブロックを動かす
         blockMove();
 
         document.getElementById("score").textContent = score;
         document.getElementById("level").textContent = level;
         document.getElementById("lines").textContent = lines;
-        //document.getElementById("combo").textContent = combo;
+        //document.getElementById("combo").textContent = combo; // 未実装
 
         if(level < 10) if(score / 2000 > level) level++;
     }
 
     // 1秒経過するごとに実行
     setTimeout(loop, 1000 - ((level - 1) * 30));
-};
+}
+
+// ゲームオーバー時の処理
+function gameOverViewer() {
+    // BGMを止める
+    soundGameOver.currentTime = 0;
+    soundBGM.pause();
+
+    // ゲームオーバー音の再生
+    soundGameOver.currentTime = 0;
+    soundGameOver.play().then(r => r).catch(e => e); // エラーを無視
+
+    soundGameOver.addEventListener('ended', (event) => {
+        // ハイスコア音の再生
+        soundHighScoreStart.currentTime = 0;
+        soundHighScoreStart.play().then(r => r).catch(e => e); // エラーを無視
+
+        soundHighScoreStart.addEventListener('ended', (event) => {
+            // ハイスコアループ音の再生
+            soundHighScoreLoop.currentTime = 0;
+            soundHighScoreLoop.play().then(r => r).catch(e => e); // エラーを無視
+        });
+    });
+
+    // ゲームオーバー
+    gameOver = true;
+
+    // ゲームオーバー画面を表示
+    document.getElementById("playingState").textContent = "ゲームオーバー";
+    alert("ゲームオーバー\nスコア: " + score + "\nレベル: " + level + "\nライン: " + lines);
+
+    // ゲームオーバーになったらシェアボタンを表示 - https://style.potepan.com/articles/21691.html#onclick-2
+    document.getElementById("shareTwitter").innerHTML = "<a class='twitter-share-button' href='' " +
+        "onclick='shareToTwitter()' target='_blank' rel='nofollow noopener noreferrer'>" +
+        "<img src='../img/webp/twitter_tweet.webp' width='80' height='20'></a>";
+    document.getElementById("shareMisskey").innerHTML = "<a href='' onclick='shareToFediverse()' " +
+        "target='_blank' rel='nofollow noopener noreferrer'><img src='../img/webp/misskey_note.webp' width='80' height='20'></a>";
+}
+
+// メモ: 改行には%0Aを使用する。スペースには%20を使用する。
+const uri1 = "テトリスもどきで%20";
+const uri2 = "%20ライン消して%20";
+const uri3 = "%20点獲得しました！";
+/* TwitterShare - https://developer.twitter.com/en/docs/twitter-for-websites/tweet-button/overview
+                - https://developer.twitter.com/en/docs/twitter-for-websites/tweet-button/guides/web-intent
+                - https://hirashimatakumi.com/blog/1384.html
+ */
+function shareToTwitter() {
+    // テキストの生成
+    const text = uri1 + lines + uri2 + score + uri3 + "%0A&hashtags=テトリスもどき,WebTetris&related=waya0125";
+    // 書き出し形式 https://twitter.com/intent/tweet?text=メッセージ&hashtags=ハッシュタグ&related=関連アカウント
+    window.open(
+        "https://twitter.com/intent/tweet?text=" + text,
+        '',
+        'width=800, height=600');
+}
+// MisskeyShare - https://misskeyshare.link/introduce.html
+function shareToFediverse() {
+    // テキストの生成
+    const text = uri1 + lines + uri2 + score + uri3;
+    // 書き出し形式 https://misskeyshare.link/share.html?text=メッセージ&url=URL
+    window.open(
+        "https://misskeyshare.link/share.html?text=" + text + "&url=" + 'https://waya0125.github.io/WebTetris/',
+        '',
+        'width=500, height=600');
+}
 
 /* 音声ファイルの読み込み
  * 音声操作に関する資料 - https://www.webdesignleaves.com/pr/jquery/javascript-audio.html
@@ -588,10 +630,11 @@ document.getElementById("playing").addEventListener("click", function() {
     document.getElementById("playingState").textContent = playingState ? "一時停止" : "再生";
 });
 // 右回転ボタン 1回転ごとにstatusを引いていく
-document.getElementById("rotate").addEventListener("click", function() {block.status++;
+document.getElementById("rotate").addEventListener("click", function() {
     // 一時停止中・開始前・ゲームオーバーなら動かさない
-    if(playingState) return;
+    if(playingState || gameOver) return;
 
+    block.status++;
     soundRotate.currentTime = 0;
     soundRotate.play().then(r => r).catch(e => e); // エラーを無視
 
@@ -673,6 +716,9 @@ window.addEventListener(
             // ハードドロップ
             case "Space":
             case "KeyW":
+                // 一時停止中・開始前・ゲームオーバーなら動かさない
+                if(playingState || gameOver) return;
+
                 // 下に動かせるなら設置可能な最下層まで動かす
                 while(setBlockCheck(block.type, block.status, block.x, block.y + 1)) block.y++;
                 blockGenerate();    // 次のブロックへ
@@ -681,6 +727,9 @@ window.addEventListener(
             // ソフトドロップ
             case "KeyS":
             case "ArrowDown":
+                // 一時停止中・開始前・ゲームオーバーなら動かさない
+                if(playingState || gameOver) return;
+
                 // 下に1マス動かす
                 blockMove();
                 break;
