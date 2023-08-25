@@ -512,9 +512,9 @@ function gameOverViewer() {
     // ゲームオーバーになったらシェアボタンを表示 - https://style.potepan.com/articles/21691.html#onclick-2
     document.getElementById("shareTwitter").innerHTML = "<a class='twitter-share-button' href='' " +
         "onclick='shareToTwitter()' target='_blank' rel='nofollow noopener noreferrer'>" +
-        "<img src='../img/webp/twitter_tweet.webp' width='80' height='20'></a>";
+        "<img src='img/webp/twitter_tweet.webp' width='80' height='20'></a>";
     document.getElementById("shareMisskey").innerHTML = "<a href='' onclick='shareToFediverse()' " +
-        "target='_blank' rel='nofollow noopener noreferrer'><img src='../img/webp/misskey_note.webp' width='80' height='20'></a>";
+        "target='_blank' rel='nofollow noopener noreferrer'><img src='img/webp/misskey_note.webp' width='80' height='20'></a>";
 }
 
 // メモ: 改行には%0Aを使用する。スペースには%20を使用する。
