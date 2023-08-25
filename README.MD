@@ -29,7 +29,7 @@ This is a simple Tetris game. It is based on the [Tetris game](https://github.co
 | E/↑     | Rotate Right |
 | Escape  | Pause        |
 
-Read more [here](https://waya0125.github.io/tetris/README.html)
+Read more [here](https://waya0125.github.io/WebTetris/README.html)
 
 ## License
 
