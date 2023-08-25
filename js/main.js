@@ -678,13 +678,12 @@ document.getElementById("down").addEventListener("click", function() {
 });
 
 /* キーボードイベント
- * キーを押したときに実行
  * 旧式のキーコードでは非推奨になっていたためこれをcodeで置き換えた
  * https://developer.mozilla.org/ja/docs/Web/API/KeyboardEvent/code
- *
- * 今回はキーを押したときに実行するのでkeydownを使用
+ * https://developer.mozilla.org/ja/docs/Web/API/Document/keyup_event
  * https://developer.mozilla.org/ja/docs/Web/API/Document/keydown_event
  */
+// キーを押したときに実行
 window.addEventListener(
     "keydown",
     (event) => {
@@ -748,11 +747,8 @@ window.addEventListener(
             // 左回転
             case "KeyQ":
             case "KeyZ":
-                // 一時停止中・開始前・ゲームオーバーなら動かさない
-                if(playingState || gameOver) return;
-
-                // 左に回転させる
-                rotateKey = !rotateKey;
+                // 一時停止中・開始前・ゲームオーバーもしくは回転ボタンを押した状態なら動かさない
+                if(playingState || gameOver || !rotateKey) return;
 
                 // 回転音の再生
                 soundRotate.currentTime = 0;
@@ -776,8 +772,8 @@ window.addEventListener(
             // 右回転
             case "KeyE":
             case "ArrowUp":
-                // 一時停止中・開始前・ゲームオーバーなら動かさない
-                if(playingState || gameOver) return;
+                // 一時停止中・開始前・ゲームオーバーもしくは回転ボタンを押した状態なら動かさない
+                if(playingState || gameOver || !rotateKey) return;
 
                 // 右に回転させる
                 rotateKey = !rotateKey;
@@ -804,6 +800,25 @@ window.addEventListener(
     },
     true, // キャプチャー
 );
+
+// キーを離したときに実行
+document.addEventListener(
+    "keyup",
+    (event) => {
+        if (event.defaultPrevented) return; // イベントがすでに処理されている場合は何もしない
+
+        // キーに応じて処理を分ける
+        switch (event.code) {
+            // 回転ボタンが押されていない場合は
+            case "KeyE":
+            case "ArrowUp":
+            case "KeyQ":
+            case "KeyZ":
+                // 回転ボタンを押せるようにする
+                rotateKey = true;
+                break;
+        }
+});
 
 setInterval(graph, fps); // フレームの最後に実行
 loop();                  // メインループを実行
