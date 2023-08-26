@@ -693,19 +693,19 @@ window.addEventListener(
         switch (event.code) {
             // 一時停止
             case "Escape":
-                // ゲームオーバーならリロード
-                if(gameOver) location.reload();
+                // trueとfalseの切り替え (否定演算子を使用)
+                playingState = !playingState;
 
-                // 一時停止中・開始前・ゲームオーバーなら動かさない
-                if(!playingState) {
-                    playingState = true;
+                if(playingState && !gameOver) {
                     soundPause.currentTime = 0;
                     soundPause.play().then(r => r).catch(e => e); // エラーを無視
                     soundBGM.pause();
                 }
-                else {
-                    playingState = false;
+                else if (!playingState && !gameOver) {
                     soundBGM.play().then(r => r).catch(e => e); // エラーを無視
+                }
+                else if (gameOver) {
+                    location.reload();
                 }
 
                 // ボタンのテキストを切り替え
