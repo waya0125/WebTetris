@@ -63,3 +63,4 @@ Each item is described in the source code.
 | 1.0.3   | 2023/08/26 | https://github.com/project-wayamoti/WebTetris/commit/5251f4a4afba589bce879829e82d651e5fd31dac |
 | 1.0.4   | 2023/08/26 | https://github.com/project-wayamoti/WebTetris/commit/b2c8556e7cdffea5ae7f91c9b6c72b71150595a8 |
 | 1.0.5   | 2023/08/26 | https://github.com/project-wayamoti/WebTetris/commit/07cd2b414ae1a185cb04f4c3811cd320ecf1ed06 |
+| 1.1.0   | 2023/08/26 | https://github.com/project-wayamoti/WebTetris/commit/2f6f5b1e3e4877d1abb7d8bff6bd612a2c4af798 |

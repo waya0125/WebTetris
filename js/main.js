@@ -38,18 +38,19 @@ function Block(x, y, type) {
 }
 
 const block = new Block(4, 0, Math.floor(Math.random() * (7)));
-let fps = 1000 / 60;   // 60fps
-let fieldWidth = 12;   // フィールドの幅
-let fieldHeight = 18;  // フィールドの高さ
-let currentBlock = 1;  // 現在のブロック
+let fps = 1000 / 60;      // 60fps
+let fieldWidth = 12;      // フィールドの幅
+let fieldHeight = 18;     // フィールドの高さ
+let currentBlock = 1;     // 現在のブロック
 let nextBlock = Math.floor(Math.random() * (7)); // 次のブロック
-let rotateKey = true;  // 回転キーの連打防止
-let level = 1;         // レベル
-let score = 0;         // スコア
-let lines = 0;         // 消したライン数
-let combo = 0;         // コンボ数 (未実装)
-let playingState = true; // 再生を止めるか否か (true: 一時停止, false: 再生)
-let gameOver = false;  // ゲームオーバーか否か
+let rotateKey = true;     // 回転キーの連打防止
+let level = 1;            // レベル
+let score = 0;            // スコア
+let lines = 0;            // 消したライン数
+let combo = 0;            // コンボ数 (未実装)
+let deleteLinesCount = 0; // 消去回数
+let playingState = true;  // 再生を止めるか否か (true: 一時停止, false: 再生)
+let gameOver = false;     // ゲームオーバーか否か
 
 // ブロックの種類
 let cell = {
@@ -355,9 +356,8 @@ function blockMove() {
 
 // 行列が埋まったら埋まった行を消して消えた分ブロックを下げる
 function deleteLine(y) {
-    // 消す音の再生
-    soundDelete.currentTime = 0;
-    soundDelete.play().then(r => r).catch(e => e); // エラーを無視
+    // 消去回数をカウント
+    deleteLinesCount++;
 
     for(let i = y; i > 0; i--) {
         for(let j = 1; j < fieldWidth - 1; j++) {
@@ -406,6 +406,25 @@ function blockGenerate() {
         }
     }
 
+    // 削除カウントによって音を変える
+    // 1~3行消したら
+    if(deleteLinesCount > 0 && deleteLinesCount < 4) {
+        // 通常の消す音を再生
+        soundDelete.currentTime = 0;
+        soundDelete.play().then(r => r).catch(e => e); // エラーを無視
+        deleteLinesCount = 0; // 再生したらカウントをリセット
+    }
+    // 4行消したら
+    else if(deleteLinesCount === 4) {
+        // 4ライン消しの音を再生
+        soundDelete4Line.currentTime = 0;
+        soundDelete4Line.play().then(r => r).catch(e => e); // エラーを無視
+        deleteLinesCount = 0; // 再生したらカウントをリセット
+
+        // スコアを加算
+        score += 200 * level;
+    }
+
     // 次のブロックを登録
     block.type = currentBlock;
     block.x = 4;
@@ -450,12 +469,6 @@ function nextBlockViewer() {
     d.innerHTML = s;
 }
 
-function tick() {
-    let base = 1000;
-    if(level === 1) return base;
-    base -= level * 30;
-}
-
 /**
  * メインループ
  * 1秒経過するごとに実行
@@ -473,7 +486,21 @@ function loop() {
         document.getElementById("lines").textContent = lines;
         //document.getElementById("combo").textContent = combo; // 未実装
 
-        if(level < 10) if(score / 2000 > level) level++;
+        if(level < 10) if(score / 2000 > level) {
+            // レベルアップ
+            level++;
+
+            soundDelete.addEventListener('ended', (event) => {
+                // レベルアップ音の再生
+                soundLevelUp.currentTime = 0;
+                soundLevelUp.play().then(r => r).catch(e => e); // エラーを無視
+            });
+            soundDelete4Line.addEventListener('ended', (event) => {
+                // レベルアップ音の再生
+                soundLevelUp.currentTime = 0;
+                soundLevelUp.play().then(r => r).catch(e => e); // エラーを無視
+            });
+        }
     }
 
     // 1秒経過するごとに実行
@@ -590,6 +617,10 @@ soundSet.volume = 0.3;
 let soundPause = new Audio();
 soundPause.src = 'audio/tetris_Pause.ogg';
 soundPause.volume = 0.1;
+// 一時停止音
+let soundLevelUp = new Audio();
+soundLevelUp.src = 'audio/tetris_LevelUp.ogg';
+soundLevelUp.volume = 1.0;
 // ハイスコア（未実装だけどゲームオーバー後に流しておく）
 let soundHighScoreStart = new Audio();
 soundHighScoreStart.src = 'audio/tetris_HighScore_Start.ogg';

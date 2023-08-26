@@ -1,513 +1,536 @@
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-</head>
-<style>
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-*{
-  padding: 0;
-  margin: 0;
-}
+        <meta property="og:title" content="">
+        <meta property="og:type" content="">
+        <meta property="og:url" content="">
+        <meta property="og:image" content="">
 
-/* ゲーム画面表示場所の大きさとか */
-#display {
-  width: calc(24px * 12);
-  height: calc(24px * 22);
-}
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="apple-touch-icon" href="icon.png">
+        <!-- Place favicon.ico in the root directory -->
 
-/* 1マスの大きさとか色(デフォルト 黒) */
-.cell {
-  width: 22px;
-  height: 22px;
-  display:block;
-  float: left;
-  background-color: rgb(32, 32, 32);
-  border-left: 1px solid rgb(64, 64, 64);
-  border-top: 1px solid rgb(64, 64, 64);
-  border-right: 1px solid rgb(16, 16, 16);
-  border-bottom: 1px solid rgb(16, 16, 16);
-}
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
 
-/* 外側の壁用のマスの色(灰色) */
-.wall {
-  background-color: rgb(128, 128, 128);
-  border-left: 1px solid rgb(192, 192, 192);
-  border-top: 1px solid rgb(192, 192, 192);
-  border-right: 1px solid rgb(64, 64, 64);
-  border-bottom: 1px solid rgb(64, 64, 64);
-}
+        <meta name="theme-color" content="#fafafa">
 
-/* 水色 */
-.I {
-  background-color: #3399ff;
-  border-left: 1px solid #99ccff;
-  border-top: 1px solid #99ccff;
-  border-right: 1px solid #0066ff;
-  border-bottom: 1px solid #0066ff;
-}
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
 
-/* 紫色 */
-.T {
-  background-color: #cc33cc;
-  border-left: 1px solid #cc66cc;
-  border-top: 1px solid #cc66cc;
-  border-right: 1px solid #cc00cc;
-  border-bottom: 1px solid #cc00cc;
-}
+        <style>
+            *{
+                padding: 0;
+                margin: 0;
+            }
 
-/* 黄色 */
-.O {
-  background-color: #ccff00;
-  border-left: 1px solid #ffff00;
-  border-top: 1px solid #ffff00;
-  border-right: 1px solid #99cc00;
-  border-bottom: 1px solid #99cc00;
-}
+            /* ゲーム画面表示場所の大きさとか */
+            #display {
+                width: calc(24px * 12);
+                height: calc(24px * 22);
+            }
 
-/* 赤色 */
-.Z {
-  background-color: #ff0033;
-  border-left: 1px solid #cc3366;
-  border-top: 1px solid #cc3366;
-  border-right: 1px solid #cc0033;
-  border-bottom: 1px solid #cc0033;
-}
+            /* 1マスの大きさとか色(デフォルト 黒) */
+            .cell {
+                width: 22px;
+                height: 22px;
+                display:block;
+                float: left;
+                background-color: rgb(32, 32, 32);
+                border-left: 1px solid rgb(64, 64, 64);
+                border-top: 1px solid rgb(64, 64, 64);
+                border-right: 1px solid rgb(16, 16, 16);
+                border-bottom: 1px solid rgb(16, 16, 16);
+            }
 
-/* 黄緑色 */
-.S {
-  background-color: #66cc33;
-  border-left: 1px solid #99ff66;
-  border-top: 1px solid #99ff66;
-  border-right: 1px solid #339900;
-  border-bottom: 1px solid #339900;
-}
+            /* 外側の壁用のマスの色(灰色) */
+            .wall {
+                background-color: rgb(128, 128, 128);
+                border-left: 1px solid rgb(192, 192, 192);
+                border-top: 1px solid rgb(192, 192, 192);
+                border-right: 1px solid rgb(64, 64, 64);
+                border-bottom: 1px solid rgb(64, 64, 64);
+            }
 
-/* オレンジ色 */
-.L {
-  background-color: #ff6600;
-  border-left: 1px solid #ff9966;
-  border-top: 1px solid #ff9966;
-  border-right: 1px solid #cc6633;
-  border-bottom: 1px solid #cc6633;
-}
+            /* 水色 */
+            .I {
+                background-color: #3399ff;
+                border-left: 1px solid #99ccff;
+                border-top: 1px solid #99ccff;
+                border-right: 1px solid #0066ff;
+                border-bottom: 1px solid #0066ff;
+            }
 
-/* 青色 */
-.J {
-  background-color: #0033cc;
-  border-left: 1px solid #0066ff;
-  border-top: 1px solid #0066ff;
-  border-right: 1px solid #000099;
-  border-bottom: 1px solid #000099;
-}
+            /* 紫色 */
+            .T {
+                background-color: #cc33cc;
+                border-left: 1px solid #cc66cc;
+                border-top: 1px solid #cc66cc;
+                border-right: 1px solid #cc00cc;
+                border-bottom: 1px solid #cc00cc;
+            }
 
-/* ボタン */
-#rotate, #left, #up, #right, #down {
-  width: 48px;
-  height: 48px;
-  font-size: 32px;
-}
-</style>
-<body> 
+            /* 黄色 */
+            .O {
+                background-color: #ccff00;
+                border-left: 1px solid #ffff00;
+                border-top: 1px solid #ffff00;
+                border-right: 1px solid #99cc00;
+                border-bottom: 1px solid #99cc00;
+            }
 
-  <!-- 表示場所 -->
-  <div id="display"></div>
-  <div id="buttons">
-    <input type="button" id="rotate" value="🔁">
-    <input type="button" id="left" value="←">
-    <input type="button" id="up" value="↑">
-    <input type="button" id="right" value="→">
-    <input type="button" id="down" value="↓">
-  </div>
+            /* 赤色 */
+            .Z {
+                background-color: #ff0033;
+                border-left: 1px solid #cc3366;
+                border-top: 1px solid #cc3366;
+                border-right: 1px solid #cc0033;
+                border-bottom: 1px solid #cc0033;
+            }
 
-<script>
+            /* 黄緑色 */
+            .S {
+                background-color: #66cc33;
+                border-left: 1px solid #99ff66;
+                border-top: 1px solid #99ff66;
+                border-right: 1px solid #339900;
+                border-bottom: 1px solid #339900;
+            }
 
+            /* オレンジ色 */
+            .L {
+                background-color: #ff6600;
+                border-left: 1px solid #ff9966;
+                border-top: 1px solid #ff9966;
+                border-right: 1px solid #cc6633;
+                border-bottom: 1px solid #cc6633;
+            }
 
-// ブロックのでーた 
-function Block(x, y, type) {
-  this.x = x;
-  this.y = y;
-  this.type = type;
-  this.status = 0;
-}
-var block = new Block(4, 0, Math.floor(Math.random() * (7)));
-let fps = 1000 / 60;
-let field_width = 12;
-let field_height = 22;
-let Cell = {
-  None : 0,
-  Wall : 1,
-  I : 2,
-  O : 3,
-  S : 4,
-  Z : 5,
-  J : 6,
-  L : 7,
-  T : 8,
-};
-// カウンタ
-var cnt = 0;
+            /* 青色 */
+            .J {
+                background-color: #0033cc;
+                border-left: 1px solid #0066ff;
+                border-top: 1px solid #0066ff;
+                border-right: 1px solid #000099;
+                border-bottom: 1px solid #000099;
+            }
 
-// 出力用メモリ
-var vram = [
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1],
-  ];
+            /* ボタン */
+            #rotate, #left, #up, #right, #down {
+                width: 48px;
+                height: 48px;
+                font-size: 32px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Add your site or application content here -->
+        <p>Hello world! This is HTML5 Boilerplate.</p>
 
-// ゲームを管理するためのフィールド
-var field = [
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1],
-  ];
+        <!-- 表示場所 -->
+        <div id="display"></div>
+        <div id="buttons">
+        <input type="button" id="rotate" value="🔁">
+        <input type="button" id="left" value="←">
+        <input type="button" id="up" value="↑">
+        <input type="button" id="right" value="→">
+        <input type="button" id="down" value="↓">
+        </div>
 
-// 各ブロックの状態の数 - 1
-let block_status = [1, 0, 1, 1, 3, 3, 3]
-// 各ブロックを格納する
-let blocks = [
-  [ // I
-    [
-      [Cell.I,Cell.I,Cell.I,Cell.I]
-    ],
-    [
-      [Cell.I],
-      [Cell.I],
-      [Cell.I],
-      [Cell.I]
-    ]
-  ],
-  [ // O
-    [
-      [Cell.O,Cell.O],
-      [Cell.O,Cell.O]
-    ]
-  ],
-  [ // S
-    [
-      [Cell.S,Cell.None],
-      [Cell.S,Cell.S],
-      [Cell.None,Cell.S]
-    ],
-    [
-      [Cell.None,Cell.S,Cell.S],
-      [Cell.S,Cell.S,Cell.None]
-    ]
-  ],
-  [ // Z
-    [
-      [Cell.None,Cell.Z],
-      [Cell.Z,Cell.Z],
-      [Cell.Z,Cell.None]
-    ],
-    [
-      [Cell.Z,Cell.Z,Cell.None],
-      [Cell.None,Cell.Z,Cell.Z]
-    ]
-  ],
-  [ // J
-    [
-      [Cell.None,Cell.J],
-      [Cell.None,Cell.J],
-      [Cell.J,Cell.J]
-    ],
-    [
-      [Cell.J,Cell.None,Cell.None],
-      [Cell.J,Cell.J,Cell.J]
-    ],
-    [
-      [Cell.J,Cell.J],
-      [Cell.J,Cell.None],
-      [Cell.J,Cell.None]
-    ],
-    [
-      [Cell.J,Cell.J,Cell.J],
-      [Cell.None,Cell.None,Cell.J]
-    ]
-  ],
-  [ // L
-    [
-      [Cell.L,Cell.None],
-      [Cell.L,Cell.None],
-      [Cell.L,Cell.L]
-    ],
-    [
-      [Cell.L,Cell.L,Cell.L],
-      [Cell.L,Cell.None,Cell.None]
-    ],
-    [
-      [Cell.L,Cell.L],
-      [Cell.None,Cell.L],
-      [Cell.None,Cell.L]
-    ],
-    [
-      [Cell.None,Cell.None,Cell.L],
-      [Cell.L,Cell.L,Cell.L]
-    ]
-  ],
-  [ // T
-    [
-      [Cell.T,Cell.None],
-      [Cell.T,Cell.T],
-      [Cell.T,Cell.None]
-    ],
-    [
-      [Cell.T,Cell.T,Cell.T],
-      [Cell.None,Cell.T,Cell.None]
-    ],
-    [
-      [Cell.None,Cell.T],
-      [Cell.T,Cell.T],
-      [Cell.None,Cell.T]
-    ],
-    [
-      [Cell.None,Cell.T,Cell.None],
-      [Cell.T,Cell.T,Cell.T]
-    ]
-  ]
-];
+        <script>
+        // ブロックのでーた
+        function Block(x, y, type) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.status = 0;
+        }
+        var block = new Block(4, 0, Math.floor(Math.random() * (7)));
+        let fps = 1000 / 60;
+        let field_width = 12;
+        let field_height = 22;
+        let Cell = {
+        None : 0,
+        Wall : 1,
+        I : 2,
+        O : 3,
+        S : 4,
+        Z : 5,
+        J : 6,
+        L : 7,
+        T : 8,
+        };
+        // カウンタ
+        var cnt = 0;
 
-// 配列コピー
-// sa : コピー元配列
-// da : コピー先配列
-// sx : コピー元のx座標
-// sy : コピー元のy座標
-// dx : コピー先のx座標
-// dy : コピー先のy座標
-// width : コピーする幅
-// height : コピーする高さ
-// ignore : コピーしない値
-let copy = function(sa, da, sx, sy, dx, dy, ignore) {
-  let width = sa[0].length;
-  let height = sa.length;
+        // 出力用メモリ
+        var vram = [
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1],
+        ];
 
-  for(var i = 0; i < height; i++) {
-    for(var j = 0; j < width; j++) {
-      if(sa[sy + i][sx + j] == ignore) continue;
-      da[dy + i][dx + j] = sa[sy + i][sx + j];
-    }
-  }
-};
+        // ゲームを管理するためのフィールド
+        var field = [
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1],
+        ];
 
-// btypeでstatusなブロックが(x, y)な座標に設置できるか
-let checkOkeru = function(btype, status, x, y) {
-  console.log("status => " + status);
-  var b = blocks[btype][status];
-  let w = b[0].length;
-  let h = b.length;
+        // 各ブロックの状態の数 - 1
+        let block_status = [1, 0, 1, 1, 3, 3, 3]
+        // 各ブロックを格納する
+        let blocks = [
+        [ // I
+        [
+        [Cell.I,Cell.I,Cell.I,Cell.I]
+        ],
+        [
+        [Cell.I],
+        [Cell.I],
+        [Cell.I],
+        [Cell.I]
+        ]
+        ],
+        [ // O
+        [
+        [Cell.O,Cell.O],
+        [Cell.O,Cell.O]
+        ]
+        ],
+        [ // S
+        [
+        [Cell.S,Cell.None],
+        [Cell.S,Cell.S],
+        [Cell.None,Cell.S]
+        ],
+        [
+        [Cell.None,Cell.S,Cell.S],
+        [Cell.S,Cell.S,Cell.None]
+        ]
+        ],
+        [ // Z
+        [
+        [Cell.None,Cell.Z],
+        [Cell.Z,Cell.Z],
+        [Cell.Z,Cell.None]
+        ],
+        [
+        [Cell.Z,Cell.Z,Cell.None],
+        [Cell.None,Cell.Z,Cell.Z]
+        ]
+        ],
+        [ // J
+        [
+        [Cell.None,Cell.J],
+        [Cell.None,Cell.J],
+        [Cell.J,Cell.J]
+        ],
+        [
+        [Cell.J,Cell.None,Cell.None],
+        [Cell.J,Cell.J,Cell.J]
+        ],
+        [
+        [Cell.J,Cell.J],
+        [Cell.J,Cell.None],
+        [Cell.J,Cell.None]
+        ],
+        [
+        [Cell.J,Cell.J,Cell.J],
+        [Cell.None,Cell.None,Cell.J]
+        ]
+        ],
+        [ // L
+        [
+        [Cell.L,Cell.None],
+        [Cell.L,Cell.None],
+        [Cell.L,Cell.L]
+        ],
+        [
+        [Cell.L,Cell.L,Cell.L],
+        [Cell.L,Cell.None,Cell.None]
+        ],
+        [
+        [Cell.L,Cell.L],
+        [Cell.None,Cell.L],
+        [Cell.None,Cell.L]
+        ],
+        [
+        [Cell.None,Cell.None,Cell.L],
+        [Cell.L,Cell.L,Cell.L]
+        ]
+        ],
+        [ // T
+        [
+        [Cell.T,Cell.None],
+        [Cell.T,Cell.T],
+        [Cell.T,Cell.None]
+        ],
+        [
+        [Cell.T,Cell.T,Cell.T],
+        [Cell.None,Cell.T,Cell.None]
+        ],
+        [
+        [Cell.None,Cell.T],
+        [Cell.T,Cell.T],
+        [Cell.None,Cell.T]
+        ],
+        [
+        [Cell.None,Cell.T,Cell.None],
+        [Cell.T,Cell.T,Cell.T]
+        ]
+        ]
+        ];
 
-  for(var i = y; i < y + h; i++) {
-    for(var j = x; j < x + w; j++) {
-      if(b[i-y][j-x] == Cell.None) continue;
-      if(field[i][j] != Cell.None) return false;
-    }
-  }
-  return true;
-};
+        // 配列コピー
+        // sa : コピー元配列
+        // da : コピー先配列
+        // sx : コピー元のx座標
+        // sy : コピー元のy座標
+        // dx : コピー先のx座標
+        // dy : コピー先のy座標
+        // width : コピーする幅
+        // height : コピーする高さ
+        // ignore : コピーしない値
+        let copy = function(sa, da, sx, sy, dx, dy, ignore) {
+        let width = sa[0].length;
+        let height = sa.length;
 
-// vramをdisplayへ出力(vram to html)
-let disp = function() {
-  let d = document.getElementById("display"); // 出力場所の要素を取得
+        for(var i = 0; i < height; i++) {
+        for(var j = 0; j < width; j++) {
+        if(sa[sy + i][sx + j] == ignore) continue;
+        da[dy + i][dx + j] = sa[sy + i][sx + j];
+        }
+        }
+        };
 
-  var s = ""; // displayへ書き込むhtmlを格納する変数
+        // btypeでstatusなブロックが(x, y)な座標に設置できるか
+        let checkOkeru = function(btype, status, x, y) {
+        console.log("status => " + status);
+        var b = blocks[btype][status];
+        let w = b[0].length;
+        let h = b.length;
 
-  for(var i = 0; i < field_height; i++) {
-    for(var j = 0; j < field_width; j++) {
-      s += "<div class='cell ";
-      switch(vram[i][j]) {
-      case Cell.Wall: s += "wall"; break;
-      case Cell.I: s += "I"; break;
-      case Cell.O: s += "O"; break;
-      case Cell.S: s += "S"; break;
-      case Cell.Z: s += "Z"; break;
-      case Cell.J: s += "J"; break;
-      case Cell.L: s += "L"; break;
-      case Cell.T: s += "T"; break;
-      case Cell.None: break;
-      }
-      s += "'></div>";
-    }
-  }
+        for(var i = y; i < y + h; i++) {
+        for(var j = x; j < x + w; j++) {
+        if(b[i-y][j-x] == Cell.None) continue;
+        if(field[i][j] != Cell.None) return false;
+        }
+        }
+        return true;
+        };
 
-  d.innerHTML = s; // 要素に書き込み
-}; 
+        // vramをdisplayへ出力(vram to html)
+        let disp = function() {
+        let d = document.getElementById("display"); // 出力場所の要素を取得
 
-// 描画関係
-let graph = function() {
-  copy(field, vram, 0, 0, 0, 0, -1, 0); // vramにfieldをコピー
-  copy(blocks[block.type][block.status], vram, 0, 0, block.x, block.y, 0); // vramにブロックをコピー
-  disp();
-};
+        var s = ""; // displayへ書き込むhtmlを格納する変数
 
-// 処理
-let process = function() {
-  if(checkOkeru(block.type, block.status, block.x, block.y + 1)) block.y++; // 置ける
-  else next();  // 置けない
-};
+        for(var i = 0; i < field_height; i++) {
+        for(var j = 0; j < field_width; j++) {
+        s += "<div class='cell ";
+        switch(vram[i][j]) {
+        case Cell.Wall: s += "wall"; break;
+        case Cell.I: s += "I"; break;
+        case Cell.O: s += "O"; break;
+        case Cell.S: s += "S"; break;
+        case Cell.Z: s += "Z"; break;
+        case Cell.J: s += "J"; break;
+        case Cell.L: s += "L"; break;
+        case Cell.T: s += "T"; break;
+        case Cell.None: break;
+        }
+        s += "'></div>";
+        }
+        }
 
-// y行目を消して上のブロックを下げる
-let delline = function(y) {
-  for(var i = y; i > 0; i--) {
-    for(var j = 1; j < field_width - 1; j++) {
-      field[i][j] = field[i-1][j];
-    }
-  }
-};
+        d.innerHTML = s; // 要素に書き込み
+        };
 
-// 置けなくなったら
-let next = function() {  
-  // fieldに固定
-copy(blocks[block.type][block.status], field, 0, 0, block.x, block.y, 0);
-  
-  // 消せる行があるか調べる
-  for(var i = 0; i < field_height - 1; i++){
-    var cnt = 0;
-    for(var j = 0; j < field_width; j++){
-      cnt++;
-      if(field[i][j] == Cell.None) break;
-    }
-    if(cnt == field_width) delline(i);
-  }
+        // 描画関係
+        let graph = function() {
+        copy(field, vram, 0, 0, 0, 0, -1, 0); // vramにfieldをコピー
+        copy(blocks[block.type][block.status], vram, 0, 0, block.x, block.y, 0); // vramにブロックをコピー
+        disp();
+        };
 
-  // 次のブロックを登録
-  block.type = Math.floor(Math.random() * (7));
-  block.x = 4;
-  block.y = 0;
-  block.status = 0;
-};
+        // 処理
+        let process = function() {
+        if(checkOkeru(block.type, block.status, block.x, block.y + 1)) block.y++; // 置ける
+        else next();  // 置けない
+        };
 
-// main loop
-let loop = function() {
-  console.log(cnt++);
-  process();
-  setTimeout(loop, 1000);
-};
+        // y行目を消して上のブロックを下げる
+        let delline = function(y) {
+        for(var i = y; i > 0; i--) {
+        for(var j = 1; j < field_width - 1; j++) {
+        field[i][j] = field[i-1][j];
+        }
+        }
+        };
 
-// ボタンクリックイベント
-document.getElementById("left").addEventListener("click", function() {
-  if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--;
-});
+        // 置けなくなったら
+        let next = function() {
+        // fieldに固定
+        copy(blocks[block.type][block.status], field, 0, 0, block.x, block.y, 0);
 
-document.getElementById("up").addEventListener("click", function() {
-  while(checkOkeru(block.type, block.status, block.x, block.y + 1)){
-    block.y++;
-  }
-  next();
-});
+        // 消せる行があるか調べる
+        for(var i = 0; i < field_height - 1; i++){
+        var cnt = 0;
+        for(var j = 0; j < field_width; j++){
+        cnt++;
+        if(field[i][j] == Cell.None) break;
+        }
+        if(cnt == field_width) delline(i);
+        }
 
-document.getElementById("down").addEventListener("click", function() {
-  process();
-});
+        // 次のブロックを登録
+        block.type = Math.floor(Math.random() * (7));
+        block.x = 4;
+        block.y = 0;
+        block.status = 0;
+        };
 
-document.getElementById("right").addEventListener("click", function() {
-  if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++;
-});
+        // main loop
+        let loop = function() {
+        console.log(cnt++);
+        process();
+        setTimeout(loop, 1000);
+        };
 
-document.getElementById("rotate").addEventListener("click", function() {block.status++;
-  if(block.status > block_status[block.type]) block.status = 0;
-  if(!checkOkeru(block.type, block.status, block.x, block.y)){
-    block.status--;
-    if(block.status < 0) block.status = block_status[block.type];
-  }
-});
+        // ボタンクリックイベント
+        document.getElementById("left").addEventListener("click", function() {
+        if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--;
+        });
 
-var rotateKey = true;
+        document.getElementById("up").addEventListener("click", function() {
+        while(checkOkeru(block.type, block.status, block.x, block.y + 1)){
+        block.y++;
+        }
+        next();
+        });
 
-document.addEventListener("keyup", function(e){
-  switch(e.keyCode) {
-	case 65: // 'a'
-  case 83: // 's'
-		rotateKey = true;
-    break;
- 
-	}
-});
+        document.getElementById("down").addEventListener("click", function() {
+        process();
+        });
 
-// キーイベント
-document.addEventListener("keydown", function(e) {
-	console.log("keycode = " + e.keyCode);
-  switch(e.keyCode) {
-  case 37: // ←
-    if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--; // 左に動かせるなら動かす
-    break;
-  case 38:  // ↑
-    while(checkOkeru(block.type, block.status, block.x, block.y + 1)){  //  下まで動かす
-      block.y++;
-    }
-    next();
-    break;
-  case 39: // →
-    if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++; // 右に動かせるなら動かす
-    break;
-  case 40: // ↓
-    process();  // 下に動かせるなら動かす
-    break;
-  case 65: // 'a'
-		if(!rotateKey) break;
-		rotateKey = false;
-    // 左に回転できるなら回転する
-    block.status--;
-    if(block.status < 0) block.status = block_status[block.type];
-    if(!checkOkeru(block.type, block.status, block.x, block.y)) {
-      block.status++;
-      if(block.status > block_status[block.type]) block.status = 0;
-    }
-    break;
-  case 83: // 's'
-    // 右に回転できるなら回転する
-		if(!rotateKey) break;
-		rotateKey = false;
-    block.status++;
-    if(block.status > block_status[block.type]) block.status = 0;
-    if(!checkOkeru(block.type, block.status, block.x, block.y)){
-      block.status--;
-      if(block.status < 0) block.status = block_status[block.type];
-    }
-    break;
-  }
-  console.log("block_status => " + block.status);
-});
+        document.getElementById("right").addEventListener("click", function() {
+        if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++;
+        });
 
-setInterval(graph, fps);
-loop(); // メインループを実行
+        document.getElementById("rotate").addEventListener("click", function() {block.status++;
+        if(block.status > block_status[block.type]) block.status = 0;
+        if(!checkOkeru(block.type, block.status, block.x, block.y)){
+        block.status--;
+        if(block.status < 0) block.status = block_status[block.type];
+        }
+        });
 
-</script>
-</body>
+        var rotateKey = true;
+
+        document.addEventListener("keyup", function(e){
+        switch(e.keyCode) {
+        case 65: // 'a'
+        case 83: // 's'
+        rotateKey = true;
+        break;
+
+        }
+        });
+
+        // キーイベント
+        document.addEventListener("keydown", function(e) {
+        console.log("keycode = " + e.keyCode);
+        switch(e.keyCode) {
+        case 37: // ←
+        if(checkOkeru(block.type, block.status, block.x - 1, block.y)) block.x--; // 左に動かせるなら動かす
+        break;
+        case 38:  // ↑
+        while(checkOkeru(block.type, block.status, block.x, block.y + 1)){  //  下まで動かす
+        block.y++;
+        }
+        next();
+        break;
+        case 39: // →
+        if(checkOkeru(block.type, block.status, block.x + 1, block.y)) block.x++; // 右に動かせるなら動かす
+        break;
+        case 40: // ↓
+        process();  // 下に動かせるなら動かす
+        break;
+        case 65: // 'a'
+        if(!rotateKey) break;
+        rotateKey = false;
+        // 左に回転できるなら回転する
+        block.status--;
+        if(block.status < 0) block.status = block_status[block.type];
+        if(!checkOkeru(block.type, block.status, block.x, block.y)) {
+        block.status++;
+        if(block.status > block_status[block.type]) block.status = 0;
+        }
+        break;
+        case 83: // 's'
+        // 右に回転できるなら回転する
+        if(!rotateKey) break;
+        rotateKey = false;
+        block.status++;
+        if(block.status > block_status[block.type]) block.status = 0;
+        if(!checkOkeru(block.type, block.status, block.x, block.y)){
+        block.status--;
+        if(block.status < 0) block.status = block_status[block.type];
+        }
+        break;
+        }
+        console.log("block_status => " + block.status);
+        });
+
+        setInterval(graph, fps);
+        loop(); // メインループを実行
+        </script>
+
+        <script src="js/vendor/modernizr-3.11.2.min.js"></script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+    </body>
 </html>
